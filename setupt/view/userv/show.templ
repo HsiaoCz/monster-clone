@@ -1,5 +1,18 @@
 package userv
 
-templ Show() {
-	<h1>hello from the user page</h1>
+import "github.com/HsiaoCz/monster-clone/setupt/model"
+import "github.com/HsiaoCz/monster-clone/setupt/view/layout"
+
+templ Show(user model.User) {
+	@layout.Base() {
+		<h1>hello from the user page</h1>
+		<div>
+			<p>
+				{ user.Username }
+			</p>
+			<p>
+				{ user.Email }
+			</p>
+		</div>
+	}
 }
