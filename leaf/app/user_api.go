@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/leaf/store"
-	"github.com/gin-gonic/gin"
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserAPI struct {
@@ -17,6 +17,6 @@ func NewUserAPI(store *store.Store) *UserAPI {
 	}
 }
 
-func (u *UserAPI) HandleCreateUser(c *gin.Context) error {
+func (u *UserAPI) HandleCreateUser(c *fiber.Ctx) error {
 	return NewAPIError(http.StatusInternalServerError, "the server error but we dont know why")
 }

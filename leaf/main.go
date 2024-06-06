@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
-	"log"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
-	v1 "github.com/HsiaoCz/monster-clone/leaf/app/v1"
+	"github.com/HsiaoCz/monster-clone/leaf/app"
+	"github.com/HsiaoCz/monster-clone/leaf/conf"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,26 +35,45 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI())
-	if err != nil {
-		log.Fatal(err)
+	if err := conf.ParseConfig(); err != nil {
+		slog.Error("parse config error", "error message", err)
+		return
 	}
- 
-	
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(conf.Conf.App.MongoURI))
+	if err != nil {
+		slog.Error("mongo db connect error", "error message", err)
+		return
+	}
 
 	var (
 		logger         = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-		mysqlUserStore = store.NewMongoUserStore()
+		userColl       = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.UserColl)
+		mysqlUserStore = store.NewMongoUserStore(client, userColl)
 		store          = &store.Store{User: mysqlUserStore}
-		userHandlers   = v1.NewUserAPI(store)
+		userHandlers   = app.NewUserAPI(store)
 		router         = fiber.New()
 		av1            = router.Group("/app/v1")
 	)
 	slog.SetDefault(logger)
 	// routers
 	{
-		av1.Post("/user")
+		av1.Post("/user", userHandlers.HandleCreateUser)
 	}
-	router.Listen(":3001")
+
+	// restart and shutdown
+	go func() {
+		if err := router.Listen(conf.Conf.App.Port); err != nil {
+			panic(err)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+
+	<-quit
+
+	if err := router.Shutdown(); err != nil {
+		panic(err)
+	}
 }
