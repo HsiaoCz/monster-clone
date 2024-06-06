@@ -1,9 +1,8 @@
-package v1
+package app
 
 import (
 	"net/http"
 
-	"github.com/HsiaoCz/monster-clone/leaf/app"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gin-gonic/gin"
 )
@@ -19,5 +18,5 @@ func NewUserAPI(store *store.Store) *UserAPI {
 }
 
 func (u *UserAPI) HandleCreateUser(c *gin.Context) error {
-	return app.NewAPIError(http.StatusInternalServerError, "the server error but we dont know why")
+	return NewAPIError(http.StatusInternalServerError, "the server error but we dont know why")
 }
