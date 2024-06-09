@@ -1,12 +1,16 @@
 package store
 
 import (
+	"context"
+
 	"github.com/HsiaoCz/monster-clone/leaf/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type UserStorer interface {
-	CreateUser(*models.User) (*models.User, error)
+	CreateUser(context.Context, *models.User) (*models.User, error)
+	GetUserByID(context.Context, primitive.ObjectID) (*models.User, error)
 }
 
 type MongoUserStore struct {
@@ -21,6 +25,10 @@ func NewMongoUserStore(client *mongo.Client, coll *mongo.Collection) *MongoUserS
 	}
 }
 
-func (m *MongoUserStore) CreateUser(user *models.User) (*models.User, error) {
+func (m *MongoUserStore) CreateUser(ctx context.Context, user *models.User) (*models.User, error) {
+	return nil, nil
+}
+
+func (m *MongoUserStore) GetUserByID(ctx context.Context, uid primitive.ObjectID) (*models.User, error) {
 	return nil, nil
 }

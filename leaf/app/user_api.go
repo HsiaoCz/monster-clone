@@ -3,6 +3,7 @@ package app
 import (
 	"net/http"
 
+	"github.com/HsiaoCz/monster-clone/leaf/models"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,5 +19,26 @@ func NewUserAPI(store *store.Store) *UserAPI {
 }
 
 func (u *UserAPI) HandleCreateUser(c *fiber.Ctx) error {
-	return NewAPIError(http.StatusInternalServerError, "the server error but we dont know why")
+	createUserParams := models.CreateUserParams{}
+	if err := c.BodyParser(&createUserParams); err != nil {
+		return NewAPIError(http.StatusBadRequest, "please check the create user params")
+	}
+	msg := createUserParams.Validate()
+	if len(msg) != 0 {
+		return c.Status(http.StatusBadRequest).JSON(msg)
+	}
+	user := models.NewUserFromParams(createUserParams)
+	userRep, err := u.store.User.CreateUser(c.Context(), user)
+	if err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "create user success!",
+		"user":    userRep,
+	})
+}
+
+func (u *UserAPI) HandleGetUserByID(c *fiber.Ctx) error {
+	return nil
 }
