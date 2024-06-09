@@ -72,6 +72,8 @@ func main() {
 	// routers
 	{
 		av1.Post("/user", userHandlers.HandleCreateUser)
+		av1.Get("/user/:uid", userHandlers.HandleGetUserByID)
+		av1.Delete("/user/:id", userHandlers.HandleDeleteUserByID)
 	}
 
 	// restart and shutdown

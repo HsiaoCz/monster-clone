@@ -1,11 +1,13 @@
 package app
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/leaf/models"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserAPI struct {
@@ -40,5 +42,33 @@ func (u *UserAPI) HandleCreateUser(c *fiber.Ctx) error {
 }
 
 func (u *UserAPI) HandleGetUserByID(c *fiber.Ctx) error {
-	return nil
+	id := c.Params("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, "invalid uid")
+	}
+	user, err := u.store.User.GetUserByID(c.Context(), uid)
+	if err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": http.StatusOK,
+		"user":   user,
+	})
+}
+
+func (u *UserAPI) HandleDeleteUserByID(c *fiber.Ctx) error {
+	id := c.Params("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPIError(http.StatusBadRequest, "invalid uid")
+	}
+	if err := u.store.User.DeleteUserByID(c.Context(), uid); err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": fmt.Sprintf("delete user (uid=%s) success", uid),
+	})
 }
