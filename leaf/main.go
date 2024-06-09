@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log/slog"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,6 +15,19 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var config = fiber.Config{
+	ErrorHandler: func(c *fiber.Ctx, err error) error {
+		if e, ok := err.(app.APIError); ok {
+			return c.Status(e.Status).JSON(&e)
+		}
+		aErr := app.APIError{
+			Status:  http.StatusInternalServerError,
+			Message: err.Error(),
+		}
+		return c.Status(aErr.Status).JSON(&aErr)
+	},
+}
 
 func main() {
 	// if err := godotenv.Load(); err != nil {
@@ -51,7 +65,7 @@ func main() {
 		mysqlUserStore = store.NewMongoUserStore(client, userColl)
 		store          = &store.Store{User: mysqlUserStore}
 		userHandlers   = app.NewUserAPI(store)
-		router         = fiber.New()
+		router         = fiber.New(config)
 		av1            = router.Group("/app/v1")
 	)
 	slog.SetDefault(logger)

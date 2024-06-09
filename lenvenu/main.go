@@ -13,6 +13,7 @@ import (
 	"github.com/HsiaoCz/monster-clone/lenvenu/db"
 	"github.com/HsiaoCz/monster-clone/lenvenu/handlers"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -43,7 +44,8 @@ func main() {
 		}
 	)
 	slog.SetDefault(logger)
-
+	app.Use(middleware.Logger)
+	app.Use(middleware.Recoverer)
 	app.Route("/app/v1", func(r chi.Router) {
 		r.Post("/user", handlers.TransferHandlerFunc(userHandlers.HandleCreateUser))
 	})

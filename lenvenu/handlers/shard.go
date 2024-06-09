@@ -53,6 +53,6 @@ func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 				WriteJSON(w, arr.Status, &arr)
 			}
 		}
-		slog.Info("new request coming", "method", r.Method, "code", status.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+		slog.Info("new request", "method", r.Method, "code", status.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
 	}
 }

@@ -17,5 +17,5 @@ func NewUserHandlers(store *db.Store) *UserHandlers {
 }
 
 func (u *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	return WriteJSON(w, http.StatusOK, "hello everyone")
 }
