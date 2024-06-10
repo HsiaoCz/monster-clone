@@ -1,4 +1,4 @@
-package scripts
+package store
 
 import (
 	"context"
@@ -8,34 +8,33 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type testTagStore struct {
+type TagStorer interface {
+	CreateTags(context.Context, *models.Tag) (*models.Tag, error)
+}
+
+type MongoTagStore struct {
 	client *mongo.Client
 	coll   *mongo.Collection
 }
 
-func newTestTagStore(ctx context.Context) (*testTagStore, error) {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUrl))
-	if err != nil {
-		return nil, err
-	}
-	return &testTagStore{
+func NewMongoTagStore(client *mongo.Client, coll *mongo.Collection) *MongoTagStore {
+	return &MongoTagStore{
 		client: client,
-		coll:   client.Database(dbname).Collection(tagColl),
-	}, nil
+		coll:   coll,
+	}
 }
 
-func (t *testTagStore) CreateTags(ctx context.Context, tag *models.Tag) (*models.Tag, error) {
+func (m *MongoTagStore) CreateTags(ctx context.Context, tag *models.Tag) (*models.Tag, error) {
 	filter := bson.D{
 		{Key: "content", Value: tag.Content},
 	}
-	cursor := t.coll.FindOne(ctx, filter)
+	cursor := m.coll.FindOne(ctx, filter)
 	if cursor.Err() != mongo.ErrNoDocuments {
 		return nil, errors.New("this record exists")
 	}
-	result, err := t.coll.InsertOne(ctx, tag)
+	result, err := m.coll.InsertOne(ctx, tag)
 	if err != nil {
 		return nil, err
 	}
