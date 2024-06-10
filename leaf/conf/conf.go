@@ -15,12 +15,15 @@ type Config struct {
 }
 
 type AppConfig struct {
-	Port      string `mapstructure:"port"`
-	MongoURI  string `mapstructure:"mongoUri"`
-	DBname    string `mapstructure:"dbName"`
-	UserColl  string `mapstructure:"userColl"`
-	JWTSecret string `mapstructure:"jwtSecret"`
-	MD5Secret string `mapstructure:"md5Secret"`
+	Port        string `mapstructure:"port"`
+	MongoURI    string `mapstructure:"mongoUri"`
+	DBname      string `mapstructure:"dbName"`
+	UserColl    string `mapstructure:"userColl"`
+	JWTSecret   string `mapstructure:"jwtSecret"`
+	MD5Secret   string `mapstructure:"md5Secret"`
+	PostColl    string `mapstructure:"postColl"`
+	CommentColl string `mapstructure:"commentColl"`
+	TagsColl    string `mapstructure:"tagColl"`
 }
 
 func ParseConfig() error {

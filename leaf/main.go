@@ -60,13 +60,22 @@ func main() {
 	}
 
 	var (
-		logger         = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-		userColl       = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.UserColl)
-		mysqlUserStore = store.NewMongoUserStore(client, userColl)
-		store          = &store.Store{User: mysqlUserStore}
-		userHandlers   = app.NewUserAPI(store)
-		router         = fiber.New(config)
-		av1            = router.Group("/app/v1")
+		logger            = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
+		userColl          = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.UserColl)
+		postColl          = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.PostColl)
+		commentColl       = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.CommentColl)
+		tagColl           = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.TagsColl)
+		mongoUserStore    = store.NewMongoUserStore(client, userColl)
+		mongoPostStore    = store.NewMongoPostStore(client, postColl)
+		mongoCommentStore = store.NewMongoCommentStore(client, commentColl)
+		mongoTagStore     = store.NewMongoTagStore(client, tagColl)
+		store             = &store.Store{User: mongoUserStore, Tag: mongoTagStore, Comment: mongoCommentStore, Post: mongoPostStore}
+		userHandlers      = app.NewUserAPI(store)
+		tagHandlers       = app.NewTagsApp(store)
+		commentHandlers   = app.NewCommentsApp(store)
+		postHandlers      = app.NewPostApp(store)
+		router            = fiber.New(config)
+		av1               = router.Group("/app/v1")
 	)
 	slog.SetDefault(logger)
 	// routers
@@ -74,6 +83,10 @@ func main() {
 		av1.Post("/user", userHandlers.HandleCreateUser)
 		av1.Get("/user/:uid", userHandlers.HandleGetUserByID)
 		av1.Delete("/user/:id", userHandlers.HandleDeleteUserByID)
+
+		av1.Post("/post", postHandlers.HandleCreatePost)
+		av1.Post("/tag", tagHandlers.HandleCreateTags)
+		av1.Post("/comment", commentHandlers.HandleCreateComments)
 	}
 
 	// restart and shutdown

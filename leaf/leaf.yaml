@@ -5,3 +5,6 @@ app:
   userColl: "users"
   jwtSecret: "little fan"
   md5Secret: "xiaofan"
+  postColl: "posts"
+  commentColl: "comments"
+  tagColl: "tags"
