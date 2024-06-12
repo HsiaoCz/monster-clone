@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/HsiaoCz/monster-clone/tony/app"
+	"github.com/HsiaoCz/monster-clone/tony/store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -46,12 +47,20 @@ func main() {
 		}
 	}()
 
-	router := fiber.New(errConfig)
-	router.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(http.StatusOK).JSON(fiber.Map{
-			"message": "ok",
-		})
-	})
+	var (
+		userColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
+		mongoUserStore = store.NewMongoUserStore(client, userColl)
+		store          = &store.Store{US: mongoUserStore}
+		userHandler    = app.NewUserApp(store)
+		router         = fiber.New(errConfig)
+		v1             = router.Group("/app/v1")
+	)
+
+	// router
+	{
+		v1.Post("/user", userHandler.HandleCreateUser)
+	}
+
 	// restart and shutdown
 	go func() {
 		if err := router.Listen(os.Getenv("PORT")); err != nil {
