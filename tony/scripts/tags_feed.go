@@ -25,7 +25,7 @@ func newTagTestStore(ctx context.Context) (*tagTestStore, error) {
 	}
 	return &tagTestStore{
 		client: client,
-		coll:   client.Database(os.Getenv("DBNAME")).Collection("TAGSCOLL"),
+		coll:   client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("TAGSCOLL")),
 	}, nil
 }
 

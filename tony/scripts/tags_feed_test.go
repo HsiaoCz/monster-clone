@@ -14,20 +14,21 @@ func TestCreateTags(t *testing.T) {
 		t.Fatal(err)
 	}
 	params := []types.CreateTagParams{
-		// {Content: "运动"},
-		// {Content: "学习"},
-		// {Content: "穿搭"},
-		// {Content: "教育"},
-		// {Content: "美食"},
-		// {Content: "影视"},
-		// {Content: "职场"},
-		// {Content: "家居"},
-		// {Content: "游戏"},
-		// {Content: "旅行"},
-		// {Content: "健身"},
-		// {Content: "搞笑"},
-		// {Content: "考试"},
-		{Content: "彩妆"},
+		{Content: "美妆"},
+		{Content: "运动"},
+		{Content: "学习"},
+		{Content: "穿搭"},
+		{Content: "教育"},
+		{Content: "美食"},
+		{Content: "影视"},
+		{Content: "职场"},
+		{Content: "家居"},
+		{Content: "游戏"},
+		{Content: "旅行"},
+		{Content: "健身"},
+		{Content: "搞笑"},
+		{Content: "考试"},
+		{Content: "阅读"},
 	}
 	ctx := context.Background()
 	tagTestStore, err := newTagTestStore(ctx)
@@ -35,7 +36,6 @@ func TestCreateTags(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, param := range params {
-		t.Log(len(param.Content))
 		msg := param.Validate()
 		if len(msg) != 0 {
 			t.Fatal(msg)
@@ -63,5 +63,5 @@ func TestGetTags(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	t.Logf("%+v\n", tags)
+	t.Log(tags)
 }

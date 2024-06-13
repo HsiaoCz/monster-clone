@@ -6,7 +6,6 @@ build:
 
 mongo:
 	@docker start mongo
-	@docker exec -it mongo mongosh
 
 test:
 	@go test -v ./...
