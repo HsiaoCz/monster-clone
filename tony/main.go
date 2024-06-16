@@ -59,6 +59,9 @@ func main() {
 	// router
 	{
 		v1.Post("/user", userHandler.HandleCreateUser)
+		v1.Get("/user/:uid", userHandler.HandleGetUserByID)
+		v1.Delete("/user/:uid", userHandler.HandleDeleteUserByID)
+		v1.Post("/user/:uid")
 	}
 
 	// restart and shutdown

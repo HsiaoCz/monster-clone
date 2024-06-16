@@ -72,3 +72,23 @@ func (u *UserApp) HandleDeleteUserByID(c *fiber.Ctx) error {
 		"message": fmt.Sprintf("delete user (uid=%s) success", uid),
 	})
 }
+
+func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
+	id := c.Params("uid")
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return NewAPPError(http.StatusBadRequest, "invalid uid")
+	}
+	userUpdateParams := &types.UpdateUserParmas{}
+	if err := c.BodyParser(userUpdateParams); err != nil {
+		return NewAPPError(http.StatusBadRequest, err.Error())
+	}
+	user, err := u.store.US.UpdateUserByID(c.Context(), uid, userUpdateParams)
+	if err != nil {
+		return NewAPPError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": http.StatusOK,
+		"user":   user,
+	})
+}

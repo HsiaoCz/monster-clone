@@ -121,6 +121,10 @@ func (param CreateUserParams) getUserAge() int {
 	return age
 }
 
+type UpdateUserParmas struct{
+	UserID   primitive.ObjectID  `json:""`
+}
+
 type UserInfo struct {
 	UserID  primitive.ObjectID
 	Email   string
