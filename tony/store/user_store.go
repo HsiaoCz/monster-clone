@@ -16,7 +16,7 @@ type UserStorer interface {
 	CreateUser(context.Context, *types.User) (*types.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*types.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
-	UpdateUserByID(context.Context, primitive.ObjectID, *types.UpdateUserParmas) (*types.User, error)
+	UpdateUserByID(context.Context, primitive.ObjectID, *types.InsertDBUpdateUserParmas) (*types.User, error)
 }
 
 type MongoUserStore struct {
@@ -70,18 +70,22 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, uid primitive.Objec
 	return err
 }
 
-func (m *MongoUserStore) UpdateUserByID(ctx context.Context, uid primitive.ObjectID, updateUserParma *types.UpdateUserParmas) (*types.User, error) {
+func (m *MongoUserStore) UpdateUserByID(ctx context.Context, uid primitive.ObjectID, updateUserParma *types.InsertDBUpdateUserParmas) (*types.User, error) {
 	filter := bson.D{
 		{Key: "_id", Value: uid},
 	}
 
 	update := bson.D{
 		{Key: "$set", Value: bson.D{
-			{Key: "", Value: ""},
-			{Key: "", Value: ""},
-			{Key: "", Value: ""},
-			{Key: "", Value: ""},
-			{Key: "", Value: ""},
+			{Key: "username", Value: updateUserParma.Username},
+			{Key: "content", Value: updateUserParma.Content},
+			{Key: "job", Value: updateUserParma.Job},
+			{Key: "age", Value: updateUserParma.Age},
+			{Key: "company", Value: updateUserParma.Company},
+			{Key: "gender", Value: updateUserParma.Gender},
+			{Key: "tags", Value: updateUserParma.Tags},
+			{Key: "birthday", Value: updateUserParma.Birthday},
+			{Key: "avatar", Value: updateUserParma.Avatar},
 		}},
 	}
 

@@ -42,12 +42,13 @@ type CreateUserParams struct {
 }
 
 var (
-	minUsernameLen = 2
-	maxUsernameLen = 12
-	minPasswordLen = 8
-	maxPasswordLen = 16
-	minTagsLen     = 4
-	genderMap      = map[string]struct{}{"male": {}, "female": {}}
+	minUsernameLen    = 2
+	maxUsernameLen    = 12
+	minPasswordLen    = 8
+	maxPasswordLen    = 16
+	minTagsLen        = 4
+	maxUserContentLen = 1000
+	genderMap         = map[string]struct{}{"male": {}, "female": {}}
 )
 
 func (params CreateUserParams) Validate() map[string]string {
@@ -98,7 +99,7 @@ func NewUserFromParams(params CreateUserParams) *User {
 		Job:        "",
 		Company:    "",
 		Birthday:   params.Birthday,
-		Age:        params.getUserAge(),
+		Age:        getUserAge(params.Birthday),
 		Gender:     params.Gender,
 		Avatar:     "./static/user/avatar/1211.jpg",
 		Tags:       params.Tags,
@@ -115,14 +116,66 @@ func encryptPassword(oPassword string) string {
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 
-func (param CreateUserParams) getUserAge() int {
-	t, _ := time.Parse("2006/01/02", param.Birthday)
+func getUserAge(birthday string) int {
+	t, _ := time.Parse("2006/01/02", birthday)
 	age := time.Now().Year() - t.Year()
 	return age
 }
 
-type UpdateUserParmas struct{
-	UserID   primitive.ObjectID  `json:""`
+type UpdateUserParmas struct {
+	Username string   `json:"username,omitempty"`
+	Content  string   `json:"content,omitempty"`
+	Job      string   `json:"job,omitempty"`
+	Company  string   `json:"company,omitempty"`
+	Birthday string   `json:"birthday,omitempty"`
+	Gender   string   `json:"gender,omitempty"`
+	Avatar   string   `json:"avatar,omitempty"`
+	Tags     []string `json:"tags,omitempty"`
+}
+
+func (params UpdateUserParmas) Validate() map[string]string {
+	errors := map[string]string{}
+	if params.Username != "" {
+		if len(params.Username) < minUsernameLen || len(params.Username) > maxUsernameLen {
+			errors["username"] = fmt.Sprintf("the username shouldn't less then %d and more then %d", minUsernameLen, maxUsernameLen)
+		}
+	}
+	if params.Content != "" {
+		if len(params.Content) > maxUserContentLen {
+			errors["content"] = fmt.Sprintf("the content shouldn't more then %d", maxUserContentLen)
+		}
+	}
+	if err := isBirthdayValidate(params.Birthday); err != nil {
+		errors["birthday"] = err.Error()
+	}
+	return errors
+}
+
+type InsertDBUpdateUserParmas struct {
+	Username string
+	Content  string
+	Job      string
+	Company  string
+	Birthday string
+	Age      int
+	Gender   string
+	Avatar   string
+	Tags     []string
+}
+
+func NewInstertDBUpdateUserParams(param UpdateUserParmas) *InsertDBUpdateUserParmas {
+	age := getUserAge(param.Birthday)
+	return &InsertDBUpdateUserParmas{
+		Age:      age,
+		Content:  param.Content,
+		Job:      param.Job,
+		Username: param.Username,
+		Company:  param.Company,
+		Gender:   param.Gender,
+		Avatar:   param.Avatar,
+		Tags:     param.Tags,
+		Birthday: param.Birthday,
+	}
 }
 
 type UserInfo struct {

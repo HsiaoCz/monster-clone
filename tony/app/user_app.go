@@ -79,11 +79,15 @@ func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
 	if err != nil {
 		return NewAPPError(http.StatusBadRequest, "invalid uid")
 	}
-	userUpdateParams := &types.UpdateUserParmas{}
-	if err := c.BodyParser(userUpdateParams); err != nil {
+	userUpdateParams := types.UpdateUserParmas{}
+	if err := c.BodyParser(&userUpdateParams); err != nil {
 		return NewAPPError(http.StatusBadRequest, err.Error())
 	}
-	user, err := u.store.US.UpdateUserByID(c.Context(), uid, userUpdateParams)
+	if msg := userUpdateParams.Validate(); len(msg) != 0 {
+		return c.Status(http.StatusBadRequest).JSON(msg)
+	}
+	userInsertDBUpdateParams := types.NewInstertDBUpdateUserParams(userUpdateParams)
+	user, err := u.store.US.UpdateUserByID(c.Context(), uid, userInsertDBUpdateParams)
 	if err != nil {
 		return NewAPPError(http.StatusInternalServerError, err.Error())
 	}

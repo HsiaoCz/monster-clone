@@ -16,14 +16,14 @@ type CreateTagParams struct {
 }
 
 var (
-	minConetentLen = 6
-	maxConetentLen = 12
+	minContentLen = 6
+	maxContentLen = 12
 )
 
 func (param CreateTagParams) Validate() map[string]string {
 	errors := map[string]string{}
-	if len(param.Content) < minConetentLen || len(param.Content) > maxConetentLen {
-		errors["content"] = fmt.Sprintf("content shouldn't less then %d or more then %d", minConetentLen, maxConetentLen)
+	if len(param.Content) < minContentLen || len(param.Content) > maxContentLen {
+		errors["content"] = fmt.Sprintf("content shouldn't less then %d or more then %d", minContentLen, maxContentLen)
 	}
 	return errors
 }
