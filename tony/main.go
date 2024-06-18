@@ -12,6 +12,7 @@ import (
 	"github.com/HsiaoCz/monster-clone/tony/store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/redis/go-redis/v9"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -47,6 +48,14 @@ func main() {
 		}
 	}()
 
+	db := redis.NewClient(&redis.Options{
+		Addr:     "127.0.0.1:6379",
+		Password: "",
+		DB:       0,
+	})
+
+	log.Println(db)
+	
 	var (
 		userColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
 		mongoUserStore = store.NewMongoUserStore(client, userColl)
