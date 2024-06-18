@@ -12,4 +12,6 @@ func TestAPPHello(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(os.Getenv("PORT"))
+
+	// userHandler:=NewUserApp()
 }

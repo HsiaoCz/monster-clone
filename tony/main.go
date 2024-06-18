@@ -49,13 +49,13 @@ func main() {
 	}()
 
 	db := redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "",
+		Addr:     os.Getenv("REDISHOST"),
+		Password: os.Getenv("REDISPWD"),
 		DB:       0,
 	})
 
 	log.Println(db)
-	
+
 	var (
 		userColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
 		mongoUserStore = store.NewMongoUserStore(client, userColl)
