@@ -11,8 +11,9 @@ import (
 
 type CommentStorer interface {
 	CreateComment(context.Context, *types.Comments) (*types.Comments, error)
-	DeleteComment(context.Context, primitive.ObjectID) error
-	GetComments(context.Context) ([]*types.Comments, error)
+	DeleteCommentByID(context.Context, primitive.ObjectID) error
+	GetCommentsByPostID(context.Context, primitive.ObjectID) ([]*types.Comments, error)
+	GetCommentsByParentID(context.Context, primitive.ObjectID) ([]*types.Comments, error)
 }
 
 type MongoCommentStore struct {
@@ -30,10 +31,14 @@ func NewMongoCommentStore(client *mongo.Client, coll *mongo.Collection) *MongoCo
 func (m *MongoCommentStore) CreateComment(ctx context.Context, comment *types.Comments) (*types.Comments, error) {
 	return nil, nil
 }
-func (m *MongoCommentStore) DeleteComment(ctx context.Context, id primitive.ObjectID) (*types.Comments, error) {
+func (m *MongoCommentStore) DeleteCommentByID(ctx context.Context, cid primitive.ObjectID) error {
+	return nil
+}
+
+func (m *MongoCommentStore) GetCommentsByPostID(ctx context.Context, pid primitive.ObjectID) ([]*types.Comments, error) {
 	return nil, nil
 }
 
-func (m *MongoCommentStore) GetComments(ctx context.Context) ([]*types.Comments, error) {
+func (m *MongoCommentStore) GetCommentsByParentID(ctx context.Context, parentID primitive.ObjectID) ([]*types.Comments, error) {
 	return nil, nil
 }

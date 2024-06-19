@@ -57,20 +57,30 @@ func main() {
 	log.Println(db)
 
 	var (
-		userColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
-		mongoUserStore = store.NewMongoUserStore(client, userColl)
-		store          = &store.Store{US: mongoUserStore}
-		userHandler    = app.NewUserApp(store)
-		router         = fiber.New(errConfig)
-		v1             = router.Group("/app/v1")
+		userColl          = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
+		commentColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("COMMENTSCOLL"))
+		mongoUserStore    = store.NewMongoUserStore(client, userColl)
+		mongoCommentStore = store.NewMongoCommentStore(client, commentColl)
+		store             = &store.Store{US: mongoUserStore, CS: mongoCommentStore}
+		userHandler       = app.NewUserApp(store)
+		commentHandler    = app.NewCommentApp(store)
+		router            = fiber.New(errConfig)
+		v1                = router.Group("/app/v1")
 	)
 
 	// router
 	{
+		// user
 		v1.Post("/user", userHandler.HandleCreateUser)
 		v1.Get("/user/:uid", userHandler.HandleGetUserByID)
 		v1.Delete("/user/:uid", userHandler.HandleDeleteUserByID)
 		v1.Post("/user/:uid", userHandler.HandleUpdateUserByID)
+
+		// post
+
+		// comments
+		v1.Post("/comments", commentHandler.HandleCreateComment)
+		v1.Delete("/comments/:cid", commentHandler.HandleDeleteCommentByID)
 	}
 
 	// restart and shutdown
