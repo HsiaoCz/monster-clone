@@ -9,12 +9,14 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserStorer interface {
 	CreateUser(context.Context, *models.User) (*models.User, error)
 	GetUserByID(context.Context, primitive.ObjectID) (*models.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
+	UpdateUserByID(context.Context, primitive.ObjectID, *models.UpdateUserParmas) (*models.User, error)
 }
 
 type MongoUserStore struct {
@@ -66,4 +68,41 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, uid primitive.Objec
 	}
 	_, err := m.coll.DeleteOne(ctx, filter)
 	return err
+}
+
+func (m *MongoUserStore) UpdateUserByID(ctx context.Context, uid primitive.ObjectID, updateUserParam *models.UpdateUserParmas) (*models.User, error) {
+	fileter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "username", Value: updateUserParam.Username},
+			{Key: "avatar", Value: updateUserParam.Avatar},
+			{Key: "content", Value: updateUserParam.Content},
+			{Key: "job", Value: updateUserParam.Job},
+			{Key: "company", Value: updateUserParam.Company},
+			{Key: "gender", Value: updateUserParam.Gender},
+			{Key: "birthday", Value: updateUserParam.Birthday},
+		}},
+	}
+
+	updateOptions := options.Update().SetUpsert(true)
+
+	res, err := m.coll.UpdateOne(ctx, fileter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	
+    if res.UpsertedCount==0{
+		return nil,errors.New("no this record")
+	}
+
+	user := &models.User{}
+
+	if err := m.coll.FindOne(ctx, fileter).Decode(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

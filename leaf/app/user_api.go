@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HsiaoCz/monster-clone/leaf/app/middlewares"
 	"github.com/HsiaoCz/monster-clone/leaf/models"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
@@ -70,5 +71,28 @@ func (u *UserAPI) HandleDeleteUserByID(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
 		"message": fmt.Sprintf("delete user (uid=%s) success", uid),
+	})
+}
+
+func (u *UserAPI) HandleUpdateUser(c *fiber.Ctx) error {
+	updateUser := models.UpdateUserParmas{}
+	if err := c.BodyParser(&updateUser); err != nil {
+		return NewAPIError(http.StatusBadRequest, err.Error())
+	}
+	msg := updateUser.Validate()
+	if len(msg) != 0 {
+		return c.Status(http.StatusBadRequest).JSON(msg)
+	}
+	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(*models.UserInfo)
+	if !ok {
+		return NewAPIError(http.StatusNonAuthoritativeInfo, "user need login")
+	}
+	user, err := u.store.User.UpdateUserByID(c.Context(), userInfo.UserID, &updateUser)
+	if err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status": http.StatusOK,
+		"user":   user,
 	})
 }

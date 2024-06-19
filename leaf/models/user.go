@@ -98,7 +98,7 @@ func NewUserFromParams(params CreateUserParams) *User {
 		Job:        "",
 		Company:    "",
 		Birthday:   params.Birthday,
-		Age:        params.getUserAge(),
+		Age:        getUserAge(params.Birthday),
 		Gender:     params.Gender,
 		Avatar:     "./static/user/avatar/1211.jpg",
 		Tags:       params.Tags,
@@ -115,10 +115,31 @@ func encryptPassword(oPassword string) string {
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 
-func (param CreateUserParams) getUserAge() int {
-	t, _ := time.Parse("2006/01/02", param.Birthday)
+func getUserAge(birthday string) int {
+	t, _ := time.Parse("2006/01/02", birthday)
 	age := time.Now().Year() - t.Year()
 	return age
+}
+
+type UpdateUserParmas struct {
+	Username string `json:"username"`
+	Content  string `json:"content"`
+	Job      string `json:"job"`
+	Company  string `json:"company"`
+	Birthday string `json:"birthday"`
+	Gender   string `json:"gender"`
+	Avatar   string `json:"avatar"`
+}
+
+func (param UpdateUserParmas) Validate() map[string]string {
+	errors := map[string]string{}
+	if !isValidGender(param.Gender) {
+		errors["gender"] = fmt.Sprintf("the gender should use (%s) or (%s)", "male", "female")
+	}
+	if err := isBirthdayValidate(param.Birthday); err != nil {
+		errors["birthday"] = err.Error()
+	}
+	return errors
 }
 
 type UserInfo struct {
