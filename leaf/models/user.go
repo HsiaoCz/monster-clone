@@ -3,6 +3,7 @@ package models
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"regexp"
 	"time"
@@ -140,6 +141,22 @@ func (param UpdateUserParmas) Validate() map[string]string {
 		errors["birthday"] = err.Error()
 	}
 	return errors
+}
+
+type UpdateUserPassword struct {
+	Password   string `json:"password"`
+	RePassword string `json:"rePassword"`
+}
+
+func (param UpdateUserPassword) Validate() error {
+	if param.Password != param.RePassword {
+		return errors.New("please check your password")
+	}
+	return nil
+}
+
+func NewPasswordFromParam(param UpdateUserPassword) string {
+	return encryptPassword(param.Password)
 }
 
 type UserInfo struct {

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/HsiaoCz/monster-clone/leaf/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -24,5 +25,12 @@ func NewMongoPostStore(client *mongo.Client, coll *mongo.Collection) *MongoPostS
 }
 
 func (m *MongoPostStore) CreatePost(ctx context.Context, post *models.Posts) (*models.Posts, error) {
-	return nil, nil
+	// post can muti create
+	// so don't need to check
+	res, err := m.coll.InsertOne(ctx, post)
+	if err != nil {
+		return nil, err
+	}
+	post.ID = res.InsertedID.(primitive.ObjectID)
+	return post, nil
 }

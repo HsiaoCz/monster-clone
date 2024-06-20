@@ -96,3 +96,38 @@ func (u *UserAPI) HandleUpdateUser(c *fiber.Ctx) error {
 		"user":   user,
 	})
 }
+
+func (u *UserAPI) HandleUpdatePassword(c *fiber.Ctx) error {
+	email := c.Params("email")
+
+	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(models.UserInfo)
+	if !ok {
+		return NewAPIError(http.StatusNonAuthoritativeInfo, "need login")
+	}
+
+	if email != userInfo.Email {
+		return NewAPIError(http.StatusBadRequest, "please check the email")
+	}
+
+	// there hava a problem
+	// verify the email and reset the password should use two handlers
+
+	updateUserPasswd := models.UpdateUserPassword{}
+
+	if err := c.BodyParser(&updateUserPasswd); err != nil {
+		return NewAPIError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := updateUserPasswd.Validate(); err != nil {
+		return NewAPIError(http.StatusBadRequest, err.Error())
+	}
+
+	if err := u.store.User.UpdateUserPassword(c.Context(), userInfo.UserID, models.NewPasswordFromParam(updateUserPasswd)); err != nil {
+		return NewAPIError(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "change the password success",
+	})
+}

@@ -18,7 +18,6 @@ type Posts struct {
 }
 
 type CreatePostsParams struct {
-	UserID     string   `json:"userID"`
 	Title      string   `json:"title"`
 	Content    string   `json:"content"`
 	CreateTime string   `json:"createTime"`

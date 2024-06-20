@@ -17,6 +17,7 @@ type UserStorer interface {
 	GetUserByID(context.Context, primitive.ObjectID) (*models.User, error)
 	DeleteUserByID(context.Context, primitive.ObjectID) error
 	UpdateUserByID(context.Context, primitive.ObjectID, *models.UpdateUserParmas) (*models.User, error)
+	UpdateUserPassword(context.Context, primitive.ObjectID, string) error
 }
 
 type MongoUserStore struct {
@@ -71,7 +72,7 @@ func (m *MongoUserStore) DeleteUserByID(ctx context.Context, uid primitive.Objec
 }
 
 func (m *MongoUserStore) UpdateUserByID(ctx context.Context, uid primitive.ObjectID, updateUserParam *models.UpdateUserParmas) (*models.User, error) {
-	fileter := bson.D{
+	filter := bson.D{
 		{Key: "_id", Value: uid},
 	}
 
@@ -89,20 +90,43 @@ func (m *MongoUserStore) UpdateUserByID(ctx context.Context, uid primitive.Objec
 
 	updateOptions := options.Update().SetUpsert(true)
 
-	res, err := m.coll.UpdateOne(ctx, fileter, update, updateOptions)
+	res, err := m.coll.UpdateOne(ctx, filter, update, updateOptions)
 	if err != nil {
 		return nil, err
 	}
-	
-    if res.UpsertedCount==0{
-		return nil,errors.New("no this record")
+
+	if res.UpsertedCount == 0 {
+		return nil, errors.New("no this record")
 	}
 
 	user := &models.User{}
 
-	if err := m.coll.FindOne(ctx, fileter).Decode(user); err != nil {
+	if err := m.coll.FindOne(ctx, filter).Decode(user); err != nil {
 		return nil, err
 	}
 
 	return user, nil
+}
+
+func (m *MongoUserStore) UpdateUserPassword(ctx context.Context, uid primitive.ObjectID, passwd string) error {
+	filter := bson.D{
+		{Key: "_id", Value: uid},
+	}
+
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "password", Value: passwd},
+		}},
+	}
+	updateOptions := options.Update().SetUpsert(true)
+
+	res, err := m.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return err
+	}
+
+	if res.UpsertedCount == 0 {
+		return errors.New("no this record")
+	}
+	return nil
 }

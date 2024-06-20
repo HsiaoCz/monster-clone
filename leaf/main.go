@@ -84,6 +84,7 @@ func main() {
 		av1.Get("/user/:uid", userHandlers.HandleGetUserByID)
 		av1.Delete("/user/:id", userHandlers.HandleDeleteUserByID)
 		av1.Post("/user/update", userHandlers.HandleUpdateUser)
+		av1.Post("/user/:email", userHandlers.HandleUpdatePassword)
 
 		av1.Post("/post", postHandlers.HandleCreatePost)
 		av1.Post("/tag", tagHandlers.HandleCreateTags)
