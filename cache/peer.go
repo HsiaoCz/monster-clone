@@ -1,5 +1,7 @@
 package cache
 
+import "github.com/HsiaoCz/monster-clone/cache/cachepb"
+
 // PeerPicker is the interface that must be implemented to locate
 // the peer that owns a specific key.
 type PeerPicker interface {

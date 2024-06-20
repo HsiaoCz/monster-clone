@@ -13,6 +13,7 @@ require (
 	github.com/redis/go-redis/v9 v9.5.3
 	github.com/spf13/viper v1.19.0
 	go.mongodb.org/mongo-driver v1.15.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (

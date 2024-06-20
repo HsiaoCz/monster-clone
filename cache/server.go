@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/HsiaoCz/monster-clone/cache/cachepb"
+	"github.com/HsiaoCz/monster-clone/cache/consistenthash"
 	"google.golang.org/protobuf/proto"
 )
 
