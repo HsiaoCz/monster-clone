@@ -22,7 +22,7 @@ func NewCommentApp(store *store.Store) *CommentApp {
 func (c *CommentApp) HandleCreateComment(ctx *fiber.Ctx) error {
 	createCommentsParams := types.CreateCommentsParams{}
 	if err := ctx.BodyParser(&createCommentsParams); err != nil {
-		return NewAPPError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	msg := createCommentsParams.Validate()
 	if len(msg) != 0 {
@@ -31,7 +31,7 @@ func (c *CommentApp) HandleCreateComment(ctx *fiber.Ctx) error {
 	comments := types.NewCommentFromParams(createCommentsParams)
 	comment, err := c.store.CS.CreateComment(ctx.Context(), comments)
 	if err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
@@ -43,10 +43,10 @@ func (c *CommentApp) HandleDeleteCommentByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("cid")
 	cid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPPError(http.StatusBadRequest, "invalid id")
+		return ErrorMessage(http.StatusBadRequest, "invalid id")
 	}
 	if err := c.store.CS.DeleteCommentByID(ctx.Context(), cid); err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return ctx.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,

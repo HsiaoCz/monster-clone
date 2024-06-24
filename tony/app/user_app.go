@@ -23,7 +23,7 @@ func NewUserApp(store *store.Store) *UserApp {
 func (u *UserApp) HandleCreateUser(c *fiber.Ctx) error {
 	createUserParams := types.CreateUserParams{}
 	if err := c.BodyParser(&createUserParams); err != nil {
-		return NewAPPError(http.StatusBadRequest, "please check the create user params")
+		return ErrorMessage(http.StatusBadRequest, "please check the create user params")
 	}
 	msg := createUserParams.Validate()
 	if len(msg) != 0 {
@@ -32,7 +32,7 @@ func (u *UserApp) HandleCreateUser(c *fiber.Ctx) error {
 	user := types.NewUserFromParams(createUserParams)
 	userRep, err := u.store.US.CreateUser(c.Context(), user)
 	if err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
@@ -45,11 +45,11 @@ func (u *UserApp) HandleGetUserByID(c *fiber.Ctx) error {
 	id := c.Params("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPPError(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	user, err := u.store.US.GetUserByID(c.Context(), uid)
 	if err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
@@ -62,10 +62,10 @@ func (u *UserApp) HandleDeleteUserByID(c *fiber.Ctx) error {
 	id := c.Params("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPPError(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	if err := u.store.US.DeleteUserByID(c.Context(), uid); err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
@@ -77,11 +77,11 @@ func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
 	id := c.Params("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPPError(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	userUpdateParams := types.UpdateUserParmas{}
 	if err := c.BodyParser(&userUpdateParams); err != nil {
-		return NewAPPError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	if msg := userUpdateParams.Validate(); len(msg) != 0 {
 		return c.Status(http.StatusBadRequest).JSON(msg)
@@ -89,7 +89,7 @@ func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
 	userInsertDBUpdateParams := types.NewInstertDBUpdateUserParams(userUpdateParams)
 	user, err := u.store.US.UpdateUserByID(c.Context(), uid, userInsertDBUpdateParams)
 	if err != nil {
-		return NewAPPError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,

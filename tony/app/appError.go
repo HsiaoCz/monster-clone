@@ -1,16 +1,16 @@
 package app
 
-type APPError struct {
+type ErrorMsg struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
-func (a APPError) Error() string {
-	return a.Message
+func (e ErrorMsg) Error() string {
+	return e.Message
 }
 
-func NewAPPError(status int, message string) APPError {
-	return APPError{
+func ErrorMessage(status int, message string) ErrorMsg {
+	return ErrorMsg{
 		Status:  status,
 		Message: message,
 	}
