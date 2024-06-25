@@ -53,3 +53,34 @@ func (c *CommentApp) HandleDeleteCommentByID(ctx *fiber.Ctx) error {
 		"message": "delete comment success",
 	})
 }
+
+func (c *CommentApp) HandleGetCommentsByPostID(ctx *fiber.Ctx) error {
+	id := ctx.Params("pid")
+	pid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, "invalid post identity")
+	}
+	comments, err := c.store.CS.GetCommentsByPostID(ctx.Context(), pid)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return ctx.Status(http.StatusOK).JSON(comments)
+}
+
+func (c *CommentApp) HandleGetCommentsByPostIDAndParentID(ctx *fiber.Ctx) error {
+	id := ctx.Params("pid")
+	pid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, "invalid post identity")
+	}
+	ptId := ctx.Params("parnetID")
+	parentID, err := primitive.ObjectIDFromHex(ptId)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, "invalid parent identity")
+	}
+	comments, err := c.store.CS.GetCommentsByPostIDAndParentID(ctx.Context(), pid, parentID)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return ctx.Status(http.StatusOK).JSON(comments)
+}

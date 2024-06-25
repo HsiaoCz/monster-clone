@@ -50,10 +50,6 @@ func NewCommentFromParams(params CreateCommentsParams) *Comments {
 	comments := &Comments{}
 	userID, _ := primitive.ObjectIDFromHex(params.UserID)
 	postID, _ := primitive.ObjectIDFromHex(params.PostID)
-	if params.ParentID != "" {
-		parentID, _ := primitive.ObjectIDFromHex(params.ParentID)
-		comments.ParentID = parentID
-	}
 	comments = &Comments{
 		UserID:     userID,
 		PostID:     postID,
@@ -62,6 +58,9 @@ func NewCommentFromParams(params CreateCommentsParams) *Comments {
 		Location:   params.Location,
 		Likes:      "0",
 		Unlikes:    "0",
+	}
+	if params.ParentID != "" {
+		comments.ParentID, _ = primitive.ObjectIDFromHex(params.ParentID)
 	}
 	return comments
 }

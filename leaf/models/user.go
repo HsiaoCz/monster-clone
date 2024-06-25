@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"time"
 
-	"github.com/HsiaoCz/monster-clone/leaf/conf"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -112,7 +112,7 @@ func NewUserFromParams(params CreateUserParams) *User {
 
 func encryptPassword(oPassword string) string {
 	h := md5.New()
-	h.Write([]byte(conf.Conf.App.MD5Secret))
+	h.Write([]byte(os.Getenv("MD5SECRET")))
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 

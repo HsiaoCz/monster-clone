@@ -9,9 +9,9 @@ import (
 	"syscall"
 
 	"github.com/HsiaoCz/monster-clone/leaf/app"
-	"github.com/HsiaoCz/monster-clone/leaf/conf"
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -33,15 +33,7 @@ func main() {
 	// if err := godotenv.Load(); err != nil {
 	// 	log.Fatal(err)
 	// }
-	// env is totally shit
-	// var (
-	// 	user     = os.Getenv("MUSER")
-	// 	password = os.Getenv("PASSWORD")
-	// 	host     = os.Getenv("HOST")
-	// 	port     = os.Getenv("PORT")
-	// 	dbname   = os.Getenv("DBNAME")
-	// )
-	// we don't need this shit
+
 	// but if the db connect error we use this to check shit where?
 	// fmt.Println(user, password, host, port, dbname)
 	// dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", user, password, host, port, dbname)
@@ -49,11 +41,19 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal(err)
 	// }
-	if err := conf.ParseConfig(); err != nil {
-		slog.Error("parse config error", "error message", err)
-		return
+	if err := godotenv.Load(); err != nil {
+		panic(err)
 	}
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(conf.Conf.App.MongoURI))
+	var (
+		mongoUrl        = os.Getenv("MONGOURL")
+		port            = os.Getenv("PORT")
+		dbname          = os.Getenv("DBNAME")
+		userCollName    = os.Getenv("USERCOLL")
+		postCollName    = os.Getenv("POSTCOLL")
+		commentCollName = os.Getenv("COMMENTCOLL")
+		tagCollName     = os.Getenv("TAGCOLL")
+	)
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(mongoUrl))
 	if err != nil {
 		slog.Error("mongo db connect error", "error message", err)
 		return
@@ -61,10 +61,10 @@ func main() {
 
 	var (
 		logger            = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
-		userColl          = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.UserColl)
-		postColl          = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.PostColl)
-		commentColl       = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.CommentColl)
-		tagColl           = client.Database(conf.Conf.App.DBname).Collection(conf.Conf.App.TagsColl)
+		userColl          = client.Database(dbname).Collection(userCollName)
+		postColl          = client.Database(dbname).Collection(postCollName)
+		commentColl       = client.Database(dbname).Collection(commentCollName)
+		tagColl           = client.Database(dbname).Collection(tagCollName)
 		mongoUserStore    = store.NewMongoUserStore(client, userColl)
 		mongoPostStore    = store.NewMongoPostStore(client, postColl)
 		mongoCommentStore = store.NewMongoCommentStore(client, commentColl)
@@ -93,7 +93,7 @@ func main() {
 
 	// restart and shutdown
 	go func() {
-		if err := router.Listen(conf.Conf.App.Port); err != nil {
+		if err := router.Listen(port); err != nil {
 			panic(err)
 		}
 	}()
