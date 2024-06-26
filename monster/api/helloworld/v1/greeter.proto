@@ -2,29 +2,33 @@ syntax = "proto3";
 
 package helloworld.v1;
 
-import "google/api/annotations.proto";
-
 option go_package = "monster/api/helloworld/v1;v1";
-option java_multiple_files = true;
-option java_package = "dev.kratos.api.helloworld.v1";
-option java_outer_classname = "HelloworldProtoV1";
 
 // The greeting service definition.
 service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {
-    option (google.api.http) = {
-      get: "/helloworld/{name}"
-    };
-  }
+  rpc CreatePost(CreatePostRequest) returns (CreatePostResponse){}
+  rpc DeletePost(DeletePostRequest) returns (DeletePostResponse){}
+  rpc GetPostByID(GetPostByIDRequest) returns (GetPostByIDResponse){}
+  rpc ListPost(ListPostRequest) returns (ListPostResponse){}
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
+// create post request
+message CreatePostRequest{}
+// create post response
+message  CreatePostResponse{}
 
-// The response message containing the greetings
-message HelloReply {
-  string message = 1;
-}
+// delete post request
+message DeletePostRequest{}
+// delete post response
+message DeletePostResponse{}
+
+// get post by identity request
+message GetPostByIDRequest{}
+// get post by identity response
+message GetPostByIDResponse{}
+
+// list post request
+message ListPostRequest{}
+// list post response
+message ListPostResponse{}
+

@@ -19,11 +19,18 @@ func NewGreeterService(uc *biz.GreeterUsecase) *GreeterService {
 	return &GreeterService{uc: uc}
 }
 
-// SayHello implements helloworld.GreeterServer.
-func (s *GreeterService) SayHello(ctx context.Context, in *v1.HelloRequest) (*v1.HelloReply, error) {
-	g, err := s.uc.CreateGreeter(ctx, &biz.Greeter{Hello: in.Name})
-	if err != nil {
-		return nil, err
-	}
-	return &v1.HelloReply{Message: "Hello " + g.Hello}, nil
+func (s *GreeterService) CreatePost(ctx context.Context, in *v1.CreatePostRequest) (*v1.CreatePostResponse, error) {
+	return &v1.CreatePostResponse{}, nil
+}
+
+func (s *GreeterService) DeletePost(ctx context.Context, in *v1.DeletePostRequest) (*v1.DeletePostResponse, error) {
+	return &v1.DeletePostResponse{}, nil
+}
+
+func (s *GreeterService) GetPostByIDRequest(ctx context.Context, in *v1.GetPostByIDRequest) (*v1.GetPostByIDResponse, error) {
+	return &v1.GetPostByIDResponse{}, nil
+}
+
+func (s *GreeterService) ListPost(ctx context.Context, in *v1.ListPostRequest) (*v1.ListPostResponse, error) {
+	return &v1.ListPostResponse{}, nil
 }

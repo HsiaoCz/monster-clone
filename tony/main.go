@@ -59,10 +59,13 @@ func main() {
 	var (
 		userColl          = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
 		commentColl       = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("COMMENTSCOLL"))
+		postColl          = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("POSTCOLL"))
 		mongoUserStore    = store.NewMongoUserStore(client, userColl)
 		mongoCommentStore = store.NewMongoCommentStore(client, commentColl)
-		store             = &store.Store{US: mongoUserStore, CS: mongoCommentStore}
+		mongoPostStore    = store.NewMongoPostStore(client, postColl)
+		store             = &store.Store{US: mongoUserStore, CS: mongoCommentStore, PS: mongoPostStore}
 		userHandler       = app.NewUserApp(store)
+		postHandler       = app.NewPostApp(store)
 		commentHandler    = app.NewCommentApp(store)
 		router            = fiber.New(errConfig)
 		v1                = router.Group("/app/v1")
@@ -77,6 +80,11 @@ func main() {
 		v1.Post("/user/:uid", userHandler.HandleUpdateUserByID)
 
 		// post
+		v1.Post("/post", postHandler.HandleCreatePost)
+		v1.Delete("/post/:pid", postHandler.HandleDeletePostByID)
+		v1.Get("/post/:pid", postHandler.GetPostByID)
+		v1.Get("/post/:uid", postHandler.GetPostsByUserID)
+		v1.Get("/post", postHandler.GetPostsByClassfy)
 
 		// comments
 		v1.Post("/comments", commentHandler.HandleCreateComment)
