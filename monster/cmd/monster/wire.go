@@ -6,12 +6,11 @@
 package main
 
 import (
-	"monster/internal/biz"
-	"monster/internal/conf"
-	"monster/internal/data"
-	"monster/internal/server"
-	"monster/internal/service"
-
+	"github.com/HsiaoCz/monster-clone/monster/internal/biz"
+	"github.com/HsiaoCz/monster-clone/monster/internal/conf"
+	"github.com/HsiaoCz/monster-clone/monster/internal/data"
+	"github.com/HsiaoCz/monster-clone/monster/internal/server"
+	"github.com/HsiaoCz/monster-clone/monster/internal/service"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
