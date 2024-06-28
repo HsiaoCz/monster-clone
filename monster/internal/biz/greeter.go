@@ -2,6 +2,7 @@ package biz
 
 import (
 	"context"
+	"time"
 
 	v1 "github.com/HsiaoCz/monster-clone/monster/api/helloworld/v1"
 	"github.com/go-kratos/kratos/v2/errors"
@@ -15,15 +16,20 @@ var (
 
 // Greeter is a Greeter model.
 type Post struct {
-	Hello string
+	ID          string    `bson:"_id,omitempty"`
+	UserID      string    `bson:"userID"`
+	Title       string    `bson:"title"`
+	Content     string    `bson:"content"`
+	CreatedTime time.Time `bson:"createdTime"`
+	Location    string    `bson:"location"`
 }
 
 // GreeterRepo is a Greater repo.
 type GreeterRepo interface {
 	Save(context.Context, *Post) (*Post, error)
 	Update(context.Context, *Post) (*Post, error)
-	FindByID(context.Context, int64) (*Post, error)
-	ListByHello(context.Context, string) ([]*Post, error)
+	FindByID(context.Context, string) (*Post, error)
+	ListByUserID(context.Context, string) ([]*Post, error)
 	ListAll(context.Context) ([]*Post, error)
 }
 
@@ -40,6 +46,6 @@ func NewGreeterUsecase(repo GreeterRepo, logger log.Logger) *GreeterUsecase {
 
 // CreateGreeter creates a Greeter, and returns the new Greeter.
 func (uc *GreeterUsecase) CreateGreeter(ctx context.Context, g *Post) (*Post, error) {
-	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.Hello)
+	uc.log.WithContext(ctx).Infof("CreateGreeter: %v", g.CreatedTime)
 	return uc.repo.Save(ctx, g)
 }

@@ -14,7 +14,6 @@ type Posts struct {
 	Collections string             `bson:"collections" json:"collections"`
 	Tags        []string           `bson:"tags" json:"tags"`
 	Classify    []string           `bson:"classify" json:"classify"`
-	// Comments    string             `bson:"comments" json:"comments"`
 }
 
 type CreatePostsParams struct {

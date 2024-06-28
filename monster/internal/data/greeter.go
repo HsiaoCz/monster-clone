@@ -28,11 +28,11 @@ func (r *greeterRepo) Update(ctx context.Context, g *biz.Post) (*biz.Post, error
 	return g, nil
 }
 
-func (r *greeterRepo) FindByID(context.Context, int64) (*biz.Post, error) {
+func (r *greeterRepo) FindByID(context.Context, string) (*biz.Post, error) {
 	return nil, nil
 }
 
-func (r *greeterRepo) ListByHello(context.Context, string) ([]*biz.Post, error) {
+func (r *greeterRepo) ListByUserID(context.Context, string) ([]*biz.Post, error) {
 	return nil, nil
 }
 

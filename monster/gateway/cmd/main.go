@@ -31,13 +31,15 @@ func main() {
 	}
 
 	var (
-		port   = os.Getenv("PORT")
-		router = fiber.New(config)
-		v1     = router.Group("/api/v1")
+		port         = os.Getenv("PORT")
+		postHandlers = &handlers.PostHandlers{}
+		router       = fiber.New(config)
+		v1           = router.Group("/api/v1")
 	)
 
 	{
-		v1.Post("/post")
+		v1.Post("/post", postHandlers.HandleCreatePost)
+		v1.Delete("/post/:pid", postHandlers.HandleDeletePostByID)
 	}
 
 	// restart and shutdown

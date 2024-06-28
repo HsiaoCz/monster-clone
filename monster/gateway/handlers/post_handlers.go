@@ -7,3 +7,7 @@ type PostHandlers struct{}
 func (p *PostHandlers) HandleCreatePost(c *fiber.Ctx) error {
 	return nil
 }
+
+func (p *PostHandlers) HandleDeletePostByID(c *fiber.Ctx) error {
+	return nil
+}
