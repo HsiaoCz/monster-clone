@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/HsiaoCz/monster-clone/tony/app/middleware"
 	"github.com/HsiaoCz/monster-clone/tony/store"
 	"github.com/HsiaoCz/monster-clone/tony/types"
 	"github.com/gofiber/fiber/v2"
@@ -59,25 +60,32 @@ func (u *UserApp) HandleGetUserByID(c *fiber.Ctx) error {
 }
 
 func (u *UserApp) HandleDeleteUserByID(c *fiber.Ctx) error {
-	id := c.Params("uid")
-	uid, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return ErrorMessage(http.StatusBadRequest, "invalid uid")
+	// delete user need user login
+	// so the userID should get in the user context
+	// id := c.Params("uid")
+	// uid, err := primitive.ObjectIDFromHex(id)
+	// if err != nil {
+	// 	return ErrorMessage(http.StatusBadRequest, "invalid uid")
+	// }
+	userInfo, ok := c.UserContext().Value(middleware.CtxUserInfoKey).(*types.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
-	if err := u.store.US.DeleteUserByID(c.Context(), uid); err != nil {
+	if err := u.store.US.DeleteUserByID(c.Context(), userInfo.UserID); err != nil {
 		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
-		"message": fmt.Sprintf("delete user (uid=%s) success", uid),
+		"message": fmt.Sprintf("delete user (uid=%s) success", userInfo.UserID),
 	})
 }
 
 func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
-	id := c.Params("uid")
-	uid, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return ErrorMessage(http.StatusBadRequest, "invalid uid")
+	// update user need user login
+	// so the userID should get in the user context
+	userInfo, ok := c.UserContext().Value(middleware.CtxUserInfoKey).(*types.UserInfo)
+	if !ok {
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
 	userUpdateParams := types.UpdateUserParmas{}
 	if err := c.BodyParser(&userUpdateParams); err != nil {
@@ -87,7 +95,7 @@ func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(msg)
 	}
 	userInsertDBUpdateParams := types.NewInstertDBUpdateUserParams(userUpdateParams)
-	user, err := u.store.US.UpdateUserByID(c.Context(), uid, userInsertDBUpdateParams)
+	user, err := u.store.US.UpdateUserByID(c.Context(), userInfo.UserID, userInsertDBUpdateParams)
 	if err != nil {
 		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
