@@ -12,6 +12,7 @@ type logger struct {
 	infofile  io.Writer
 	debugfile io.Writer
 	errorfile io.Writer
+	warnfile  io.Writer
 	log       *slog.Logger
 }
 
@@ -32,6 +33,11 @@ func InitLogger() error {
 		return err
 	}
 	logger.debugfile = debugfile
+	warnfile, err := os.OpenFile("./warn.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return err
+	}
+	logger.warnfile = warnfile
 	Logger = logger
 	return nil
 }
@@ -47,5 +53,10 @@ func (l *logger) Debug(msg string, args ...any) {
 
 func (l *logger) Error(msg string, args ...any) {
 	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.errorfile, os.Stdout), &slog.HandlerOptions{}))
-	l.log.Debug(msg, args...)
+	l.log.Error(msg, args...)
+}
+
+func (l *logger) Warn(msg string, args ...any) {
+	l.log = slog.New(slog.NewJSONHandler(io.MultiWriter(l.warnfile, os.Stdout), &slog.HandlerOptions{}))
+	l.log.Warn(msg, args...)
 }

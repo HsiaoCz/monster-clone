@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/monster-clone/verson/handlers"
 	"github.com/HsiaoCz/monster-clone/verson/logger"
 	"github.com/joho/godotenv"
 )
@@ -20,15 +21,13 @@ func main() {
 	}
 
 	var (
-		port = os.Getenv("PORT")
-		app  = http.NewServeMux()
+		port         = os.Getenv("PORT")
+		userHandlers = &handlers.UserHandlers{}
+		app          = http.NewServeMux()
 	)
 	{
 		// router
-		app.HandleFunc("GET /hello", func(w http.ResponseWriter, r *http.Request) {
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte("hello"))
-		})
+		app.HandleFunc("GET /hello", handlers.TransferHandlerFunc(userHandlers.HandleCreateUser))
 	}
 	logger.Logger.Info("the http server is running", "listen address", port)
 	http.ListenAndServe(port, app)
