@@ -2,9 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
+	"log/slog"
 	"net/http"
-
-	"github.com/HsiaoCz/monster-clone/verson/logger"
 )
 
 var StatusCode = &Status{Code: http.StatusOK}
@@ -23,7 +22,7 @@ type HandlerFunc func(w http.ResponseWriter, r *http.Request) error
 func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := h(w, r); err != nil {
-			defer logger.Logger.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
+			defer slog.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
 			if e, ok := err.(ErrorMsg); ok {
 				StatusCode.Code = e.Status
 				WriteJSON(w, e.Status, &e)
@@ -36,7 +35,7 @@ func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 				WriteJSON(w, emsg.Status, &emsg)
 			}
 		}
-		logger.Logger.Info("new request", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+		slog.Info("new request", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
 	}
 }
 
