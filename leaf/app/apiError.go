@@ -1,16 +1,16 @@
 package app
 
-type APIError struct {
+type ErrorMsg struct {
 	Status  int    `json:"status"`
 	Message string `json:"message"`
 }
 
-func (a APIError) Error() string {
-	return a.Message
+func (e ErrorMsg) Error() string {
+	return e.Message
 }
 
-func NewAPIError(status int, message string) APIError {
-	return APIError{
+func ErrorMessage(status int, message string) ErrorMsg {
+	return ErrorMsg{
 		Status:  status,
 		Message: message,
 	}

@@ -1,15 +1,34 @@
 package main
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/HsiaoCz/monster-clone/fetch/handlers"
+	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
+)
 
 func main() {
-	router := http.NewServeMux()
+	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+	var (
+		port         = os.Getenv("PORT")
+		priceHandler = &handlers.PriceHandler{}
+		router       = http.NewServeMux()
+	)
 
-	router.HandleFunc("GET /fetch", Fetch)
+	router.HandleFunc("GET /fetch", handlers.TransferHandlerfunc(priceHandler.HandleFetchPrice))
 
-	http.ListenAndServe(":3001", router)
-}
+	logrus.WithFields(logrus.Fields{
+		"listen address": port,
+	}).Info("http server is running")
 
-func Fetch(w http.ResponseWriter, r *http.Request) {
-
+	http.ListenAndServe(port, router)
 }

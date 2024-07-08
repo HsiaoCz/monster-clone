@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
+	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 var StatusCode = &Status{Code: http.StatusOK}
@@ -21,8 +23,16 @@ type HandlerFunc func(w http.ResponseWriter, r *http.Request) error
 
 func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
 		if err := h(w, r); err != nil {
-			defer slog.Error("the http server error", "method", r.Method, "path", r.URL.Path, "remote address", r.RemoteAddr, "error message", err)
+			defer func() {
+				logrus.WithFields(logrus.Fields{
+					"method":         r.Method,
+					"path":           r.URL.Path,
+					"remote address": r.RemoteAddr,
+					"error message":  err,
+				}).Error("the http server error")
+			}()
 			if e, ok := err.(ErrorMsg); ok {
 				StatusCode.Code = e.Status
 				WriteJSON(w, e.Status, &e)
@@ -35,7 +45,13 @@ func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 				WriteJSON(w, emsg.Status, &emsg)
 			}
 		}
-		slog.Info("new request", "method", r.Method, "code", StatusCode.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+		logrus.WithFields(logrus.Fields{
+			"method":         r.Method,
+			"code":           StatusCode.Code,
+			"path":           r.URL.Path,
+			"remote address": r.RemoteAddr,
+			"cost":           time.Since(start),
+		}).Info("new request comming")
 	}
 }
 

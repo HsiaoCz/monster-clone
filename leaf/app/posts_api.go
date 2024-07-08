@@ -21,7 +21,7 @@ func NewPostApp(store *store.Store) *PostApp {
 func (p *PostApp) HandleCreatePost(c *fiber.Ctx) error {
 	createPostParam := models.CreatePostsParams{}
 	if err := c.BodyParser(&createPostParam); err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 
 	// p.store.Post.CreatePost(c.Context(),)

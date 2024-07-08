@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/sirupsen/logrus"
 )
 
-func HandleFetchPrice(w http.ResponseWriter, r *http.Request) {
-	logrus.WithFields(logrus.Fields{
-		"message": "hello",
-	}).Info()
+type PriceHandler struct{}
+
+func (p *PriceHandler) HandleFetchPrice(w http.ResponseWriter, r *http.Request) error {
+	return ErrorMessage(http.StatusInternalServerError, "some thing wrong")
 }

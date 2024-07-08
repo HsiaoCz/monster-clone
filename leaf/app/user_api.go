@@ -24,7 +24,7 @@ func NewUserAPI(store *store.Store) *UserAPI {
 func (u *UserAPI) HandleCreateUser(c *fiber.Ctx) error {
 	createUserParams := models.CreateUserParams{}
 	if err := c.BodyParser(&createUserParams); err != nil {
-		return NewAPIError(http.StatusBadRequest, "please check the create user params")
+		return ErrorMessage(http.StatusBadRequest, "please check the create user params")
 	}
 	msg := createUserParams.Validate()
 	if len(msg) != 0 {
@@ -33,7 +33,7 @@ func (u *UserAPI) HandleCreateUser(c *fiber.Ctx) error {
 	user := models.NewUserFromParams(createUserParams)
 	userRep, err := u.store.User.CreateUser(c.Context(), user)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
@@ -46,11 +46,11 @@ func (u *UserAPI) HandleGetUserByID(c *fiber.Ctx) error {
 	id := c.Params("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	user, err := u.store.User.GetUserByID(c.Context(), uid)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{
@@ -63,10 +63,10 @@ func (u *UserAPI) HandleDeleteUserByID(c *fiber.Ctx) error {
 	id := c.Params("uid")
 	uid, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return NewAPIError(http.StatusBadRequest, "invalid uid")
+		return ErrorMessage(http.StatusBadRequest, "invalid uid")
 	}
 	if err := u.store.User.DeleteUserByID(c.Context(), uid); err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
@@ -77,7 +77,7 @@ func (u *UserAPI) HandleDeleteUserByID(c *fiber.Ctx) error {
 func (u *UserAPI) HandleUpdateUser(c *fiber.Ctx) error {
 	updateUser := models.UpdateUserParmas{}
 	if err := c.BodyParser(&updateUser); err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 	msg := updateUser.Validate()
 	if len(msg) != 0 {
@@ -85,11 +85,11 @@ func (u *UserAPI) HandleUpdateUser(c *fiber.Ctx) error {
 	}
 	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(*models.UserInfo)
 	if !ok {
-		return NewAPIError(http.StatusNonAuthoritativeInfo, "user need login")
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "user need login")
 	}
 	user, err := u.store.User.UpdateUserByID(c.Context(), userInfo.UserID, &updateUser)
 	if err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
@@ -102,11 +102,11 @@ func (u *UserAPI) HandleUpdatePassword(c *fiber.Ctx) error {
 
 	userInfo, ok := c.UserContext().Value(middlewares.CtxUserInfoKey).(models.UserInfo)
 	if !ok {
-		return NewAPIError(http.StatusNonAuthoritativeInfo, "need login")
+		return ErrorMessage(http.StatusNonAuthoritativeInfo, "need login")
 	}
 
 	if email != userInfo.Email {
-		return NewAPIError(http.StatusBadRequest, "please check the email")
+		return ErrorMessage(http.StatusBadRequest, "please check the email")
 	}
 
 	// there hava a problem
@@ -115,15 +115,15 @@ func (u *UserAPI) HandleUpdatePassword(c *fiber.Ctx) error {
 	updateUserPasswd := models.UpdateUserPassword{}
 
 	if err := c.BodyParser(&updateUserPasswd); err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 
 	if err := updateUserPasswd.Validate(); err != nil {
-		return NewAPIError(http.StatusBadRequest, err.Error())
+		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
 
 	if err := u.store.User.UpdateUserPassword(c.Context(), userInfo.UserID, models.NewPasswordFromParam(updateUserPasswd)); err != nil {
-		return NewAPIError(http.StatusInternalServerError, err.Error())
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{

@@ -2,48 +2,28 @@ package handlers
 
 import (
 	"encoding/json"
-	"log/slog"
 	"net/http"
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/status"
 )
 
 var StatusCode = &Status{Code: http.StatusOK}
 
-type H map[string]any
-
-func WriteJSON(w http.ResponseWriter, code int, v any) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	StatusCode.Code = code
-	return json.NewEncoder(w).Encode(v)
-}
-
-type ErrorMsg struct {
-	Status  int    `json:"status"`
-	Message string `json:"message"`
-}
-
-func (e ErrorMsg) Error() string {
-	return e.Message
-}
-
-func ErrorMessage(status int, message string) ErrorMsg {
-	return ErrorMsg{
-		Status:  status,
-		Message: message,
-	}
-}
+type Handlerfunc func(w http.ResponseWriter, r *http.Request) error
 
 type Status struct {
 	Code int
 }
 
-type HandlerFunc func(w http.ResponseWriter, r *http.Request) error
+func WriteJSON(w http.ResponseWriter, code int, v any) error {
+	w.Header().Set("Content-Type", "application")
+	w.WriteHeader(code)
+	StatusCode.Code = code
+	return json.NewEncoder(w).Encode(v)
+}
 
-func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
+func TransferHandlerfunc(h Handlerfunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		if err := h(w, r); err != nil {
@@ -59,12 +39,12 @@ func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 				StatusCode.Code = e.Status
 				WriteJSON(w, e.Status, &e)
 			} else {
-				arr := ErrorMsg{
+				errMsg := ErrorMsg{
 					Status:  http.StatusInternalServerError,
 					Message: err.Error(),
 				}
-				StatusCode.Code = arr.Status
-				WriteJSON(w, arr.Status, &arr)
+				StatusCode.Code = errMsg.Status
+				WriteJSON(w, errMsg.Status, &errMsg)
 			}
 		}
 		logrus.WithFields(logrus.Fields{
@@ -74,6 +54,21 @@ func TransferHandlerFunc(h HandlerFunc) http.HandlerFunc {
 			"remote address": r.RemoteAddr,
 			"cost":           time.Since(start),
 		}).Info("new request comming")
-		slog.Info("new request", "method", r.Method, "code", status.Code, "path", r.URL.Path, "remote address", r.RemoteAddr)
+	}
+}
+
+type ErrorMsg struct {
+	Status  int    `json:"status"`
+	Message string `json:"message"`
+}
+
+func (e ErrorMsg) Error() string {
+	return e.Message
+}
+
+func ErrorMessage(status int, message string) ErrorMsg {
+	return ErrorMsg{
+		Status:  status,
+		Message: message,
 	}
 }

@@ -12,16 +12,17 @@ import (
 	"github.com/HsiaoCz/monster-clone/leaf/store"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var config = fiber.Config{
 	ErrorHandler: func(c *fiber.Ctx, err error) error {
-		if e, ok := err.(app.APIError); ok {
+		if e, ok := err.(app.ErrorMsg); ok {
 			return c.Status(e.Status).JSON(&e)
 		}
-		aErr := app.APIError{
+		aErr := app.ErrorMsg{
 			Status:  http.StatusInternalServerError,
 			Message: err.Error(),
 		}
@@ -60,7 +61,6 @@ func main() {
 	}
 
 	var (
-		logger            = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
 		userColl          = client.Database(dbname).Collection(userCollName)
 		postColl          = client.Database(dbname).Collection(postCollName)
 		commentColl       = client.Database(dbname).Collection(commentCollName)
@@ -77,7 +77,10 @@ func main() {
 		router            = fiber.New(config)
 		av1               = router.Group("/app/v1")
 	)
-	slog.SetDefault(logger)
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
 	// routers
 	{
 		av1.Post("/user", userHandlers.HandleCreateUser)
