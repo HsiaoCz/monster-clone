@@ -22,6 +22,7 @@ require (
 	go.uber.org/automaxprocs v1.5.3
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.2
+	gorm.io/gorm v1.25.10
 )
 
 require (
@@ -42,6 +43,7 @@ require (
 	github.com/gorilla/sessions v1.3.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/klauspost/compress v1.17.2 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
