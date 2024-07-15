@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/santino/data"
@@ -42,7 +41,6 @@ func (u *UserHandler) HandleCreateUser(c *fiber.Ctx) error {
 
 func (u *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
 	user_id := c.Params("user_id")
-	log.Println(user_id)
 	user, err := u.user.GetUserByID(user_id)
 	if err != nil {
 		return ErrorMessage(http.StatusBadRequest, err.Error())
@@ -50,6 +48,23 @@ func (u *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
 		"message": "get user success",
+		"user":    user,
+	})
+}
+
+func (u *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
+	var update_user types.UpdateUser
+	if err := c.BodyParser(&update_user); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	user_id := c.Params("user_id")
+	user, err := u.user.UpdateUserByID(user_id, &update_user)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "update user seccuss",
 		"user":    user,
 	})
 }
