@@ -43,10 +43,13 @@ func main() {
 	var (
 		port           = os.Getenv("PORT")
 		userData       = data.NewUserData(db.Get())
+		commentStore   = data.NewCommentStore(db.Get())
+		postStore      = data.NewPostStore(db.Get())
+		adminStore     = data.NewAdminStore(db.Get())
 		userHandler    = handler.NewUserHandler(userData)
-		postHandler    = &handler.PostHandler{}
-		adminHandler   = &handler.AdminHandler{}
-		commentHandler = &handler.CommentHandler{}
+		postHandler    = handler.NewPostHandler(postStore)
+		adminHandler   = handler.NewAdminHandler(adminStore)
+		commentHandler = handler.NewCommentHandler(commentStore)
 		app            = fiber.New(config)
 	)
 	{
