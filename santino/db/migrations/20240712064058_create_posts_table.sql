@@ -4,10 +4,10 @@ CREATE TABLE IF NOT EXISTS posts(
     user_id text unique not null,
     post_id text unique not null,
     content text not null,
-    post_path text
-    created_at timestamp with time zone not null,
-    updated_at timestamp with time zone not null,
-    deleted_at timestamp with time zone
+    post_path text,
+    created_at datetime not null,
+    updated_at datetime not null,
+    deleted_at datetime
 );
 -- +goose StatementBegin
 -- +goose StatementEnd
