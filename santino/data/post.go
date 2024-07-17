@@ -26,3 +26,7 @@ func (p *PostStore) CreatePost(post *types.Post) (*types.Post, error) {
 	}
 	return post, nil
 }
+
+func (p *PostStore) DeletePostByID(post_id string) error {
+	return p.db.Where("post_id = ?", post_id).Delete(&types.Post{}).Error
+}

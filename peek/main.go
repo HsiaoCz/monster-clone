@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/HsiaoCz/monster-clone/peek/db"
 	"github.com/HsiaoCz/monster-clone/peek/handlers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -27,6 +28,10 @@ var config = fiber.Config{
 
 func main() {
 	if err := godotenv.Load(); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := db.Init(); err != nil {
 		log.Fatal(err)
 	}
 

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/santino/data"
@@ -67,4 +68,10 @@ func (u *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
 		"message": "update user seccuss",
 		"user":    user,
 	})
+}
+
+func (u *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
+	user_id := c.Query("user_id")
+	fmt.Println(user_id)
+	return nil
 }

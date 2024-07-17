@@ -50,3 +50,7 @@ func (u *UserData) UpdateUserByID(user_id string, update_user *types.UpdateUser)
 	}
 	return &user, nil
 }
+
+func (u *UserData) DeleteUserByID(user_id string) error {
+	return u.db.Where("user_id = ? ", user_id).Delete(&types.User{}).Error
+}
