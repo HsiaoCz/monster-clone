@@ -26,3 +26,7 @@ func (c *CommentStore) CreateComment(comment *types.Comment) (*types.Comment, er
 	}
 	return comment, nil
 }
+
+func (c *CommentStore) DeleteCommentByID(comment_id string) error {
+	return c.db.Where("comment_id = ?", comment_id).Delete(&types.Comment{}).Error
+}
