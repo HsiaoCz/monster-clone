@@ -9,6 +9,7 @@ type UserStorer interface {
 	CreateUser(*types.User) (*types.User, error)
 	GetUserByID(string) (*types.User, error)
 	UpdateUserByID(string, *types.UpdateUser) (*types.User, error)
+	DeleteUserByID(string)error
 }
 
 type UserData struct {

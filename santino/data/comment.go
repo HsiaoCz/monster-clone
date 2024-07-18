@@ -7,6 +7,7 @@ import (
 
 type CommentStorer interface {
 	CreateComment(*types.Comment) (*types.Comment, error)
+	DeleteCommentByID(string) error
 }
 
 type CommentStore struct {

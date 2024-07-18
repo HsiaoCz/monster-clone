@@ -7,6 +7,7 @@ import (
 
 type AdminStorer interface {
 	CreateAdmin(*types.Admin) (*types.Admin, error)
+	DeleteAdminByID(string) error
 }
 
 type AdminStore struct {

@@ -1,12 +1,13 @@
 package data
 
 import (
-	"github.com/HsiaoCz/monster-clone/monster/gateway/types"
+	"github.com/HsiaoCz/monster-clone/santino/types"
 	"gorm.io/gorm"
 )
 
 type PostStorer interface {
 	CreatePost(*types.Post) (*types.Post, error)
+	DeletePostByID(string) error
 }
 
 type PostStore struct {

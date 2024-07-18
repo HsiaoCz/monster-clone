@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/santino/data"
@@ -72,6 +71,11 @@ func (u *UserHandler) HandleUpdateUser(c *fiber.Ctx) error {
 
 func (u *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 	user_id := c.Query("user_id")
-	fmt.Println(user_id)
-	return nil
+	if err := u.user.DeleteUserByID(user_id); err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		"status":  http.StatusOK,
+		"message": "delete user success",
+	})
 }
