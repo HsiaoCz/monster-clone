@@ -1,24 +1,22 @@
 package auth
 
 import (
-	"hollywood/app/db"
 	"fmt"
+	"hollywood/app/db"
 
 	"github.com/anthdm/superkit/kit"
 	v "github.com/anthdm/superkit/validate"
 )
 
 var profileSchema = v.Schema{
-	"firstName": v.Rules(v.Min(3), v.Max(50)),
-	"lastName":  v.Rules(v.Min(3), v.Max(50)),
+	"username": v.Rules(v.Min(3), v.Max(50)),
 }
 
 type ProfileFormValues struct {
-	ID        uint   `form:"id"`
-	FirstName string `form:"firstName"`
-	LastName  string `form:"lastName"`
-	Email     string
-	Success   string
+	ID       uint   `form:"id"`
+	Username string `form:"username"`
+	Email    string
+	Success  string
 }
 
 func HandleProfileShow(kit *kit.Kit) error {
@@ -30,10 +28,9 @@ func HandleProfileShow(kit *kit.Kit) error {
 	}
 
 	formValues := ProfileFormValues{
-		ID:        user.ID,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
 	}
 
 	return kit.Render(ProfileShow(formValues))
@@ -53,8 +50,7 @@ func HandleProfileUpdate(kit *kit.Kit) error {
 	err := db.Get().Model(&User{}).
 		Where("id = ?", auth.UserID).
 		Updates(&User{
-			FirstName: values.FirstName,
-			LastName:  values.LastName,
+			Username: values.Username,
 		}).Error
 	if err != nil {
 		return err

@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"hollywood/app/db"
 	"database/sql"
+	"hollywood/app/db"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -36,8 +36,7 @@ type User struct {
 	gorm.Model
 
 	Email           string
-	FirstName       string
-	LastName        string
+	Username        string
 	PasswordHash    string
 	EmailVerifiedAt sql.NullTime
 	CreatedAt       time.Time
@@ -51,8 +50,7 @@ func createUserFromFormValues(values SignupFormValues) (User, error) {
 	}
 	user := User{
 		Email:        values.Email,
-		FirstName:    values.FirstName,
-		LastName:     values.LastName,
+		Username:     values.Username,
 		PasswordHash: string(hash),
 	}
 	result := db.Get().Create(&user)

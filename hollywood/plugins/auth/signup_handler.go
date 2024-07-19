@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"hollywood/app/db"
 	"fmt"
+	"hollywood/app/db"
 	"net/http"
 	"os"
 	"strconv"
@@ -22,8 +22,7 @@ var signupSchema = v.Schema{
 		v.Min(7),
 		v.Max(50),
 	),
-	"firstName": v.Rules(v.Min(2), v.Max(50)),
-	"lastName":  v.Rules(v.Min(2), v.Max(50)),
+	"username": v.Rules(v.Min(2), v.Max(50)),
 }
 
 func HandleSignupIndex(kit *kit.Kit) error {
