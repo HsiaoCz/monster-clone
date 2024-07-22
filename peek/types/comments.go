@@ -1,14 +1,32 @@
 package types
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
-type Comments struct {
-	ID         primitive.ObjectID `bson:"_id" json:"id"`
-	UserID     primitive.ObjectID `bson:"userID" json:"userID"`
-	PostID     primitive.ObjectID `bson:"postID" json:"postID"`
-	ParentID   primitive.ObjectID `bson:"parentID" json:"parentID"`
-	Content    string             `bson:"content" json:"content"`
-	CreateTime string             `bson:"createTime" json:"createTime"`
-	Location   string             `bson:"location" json:"location"`
-	Likes      string             `bson:"likes" json:"likes"`
+type Comment struct {
+	gorm.Model
+	CommentID string `json:"comment_id"`
+	UserID    string `json:"user_id"`
+	PostID    string `json:"post_id"`
+	ParentID  string `json:"parent_id"`
+	Content   string `json:"content"`
+}
+
+type CreateCommentParams struct {
+	UserID   string `json:"user_id"`
+	PostID   string `json:"post_id"`
+	ParentID string `json:"parent_id"`
+	Content  string `json:"content"`
+}
+
+func NewCommentFromParams(params CreateCommentParams) *Comment {
+	return &Comment{
+		CommentID: uuid.New().String(),
+		UserID:    params.UserID,
+		PostID:    params.PostID,
+		ParentID:  params.ParentID,
+		Content:   params.Content,
+	}
 }
