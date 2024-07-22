@@ -11,6 +11,7 @@ import (
 	"github.com/HsiaoCz/monster-clone/peek/handlers"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 var config = fiber.Config{
@@ -34,7 +35,8 @@ func main() {
 	if err := db.Init(); err != nil {
 		log.Fatal(err)
 	}
-
+	logrus.SetLevel(logrus.DebugLevel)
+	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 	var (
 		port = os.Getenv("PORT")
 		app  = fiber.New(config)
