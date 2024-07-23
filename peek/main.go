@@ -9,6 +9,7 @@ import (
 
 	"github.com/HsiaoCz/monster-clone/peek/db"
 	"github.com/HsiaoCz/monster-clone/peek/handlers"
+	"github.com/HsiaoCz/monster-clone/peek/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -38,9 +39,27 @@ func main() {
 	logrus.SetLevel(logrus.DebugLevel)
 	logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
 	var (
-		port = os.Getenv("PORT")
-		app  = fiber.New(config)
+		port        = os.Getenv("PORT")
+		db          = db.Get()
+		userCase    = services.NewUserCase(db)
+		commentCase = services.NewCommentCase(db)
+		postCase    = services.NewPostCase(db)
+
+		userHandlers    = handlers.NewUserHandlers(userCase)
+		postHandlers    = handlers.NewPostHandlers(postCase)
+		commentHandlers = handlers.NewCommentHandlers(commentCase)
+		app             = fiber.New(config)
 	)
+
+	{
+		// router
+		app.Post("/user", userHandlers.HandleCreateUser)
+
+		app.Post("/post", postHandlers.HandleCreatePost)
+
+		app.Post("/comment", commentHandlers.HandleCreateComment)
+	}
+
 	go func() {
 		if err := app.Listen(port); err != nil {
 			log.Fatal(err)
