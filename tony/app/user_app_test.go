@@ -15,3 +15,17 @@ func TestAPPHello(t *testing.T) {
 
 	// userHandler:=NewUserApp()
 }
+
+func TestCreateUser(t *testing.T) {
+	if err := godotenv.Load("../.env"); err != nil {
+		t.Fatal(err)
+	}
+	t.Log(os.Getenv("PORT"))
+}
+
+func TestDeleteUser(t *testing.T) {
+	if err := godotenv.Load("../.env"); err != nil {
+		t.Fatal(err)
+	}
+	t.Log(os.Getenv("PORT"))
+}

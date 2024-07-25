@@ -18,3 +18,7 @@ func NewTagApp(store *store.Store) *TagApp {
 func (t *TagApp) HandleCreateTag(c *fiber.Ctx) error {
 	return nil
 }
+
+func (t *TagApp)HandleDeleteTag(c *fiber.Ctx)error{
+	return nil
+}

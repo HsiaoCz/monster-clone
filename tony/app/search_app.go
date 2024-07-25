@@ -22,3 +22,7 @@ func (s *SearchApp) HandleSearchUserByStr(c *fiber.Ctx) error {
 func (s *SearchApp) HandleSearchPostByStr(c *fiber.Ctx) error {
 	return nil
 }
+
+func (s *SearchApp)HandleSearchCommentByStr(c *fiber.Ctx)error{
+	return nil
+}

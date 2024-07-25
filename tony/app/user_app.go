@@ -104,3 +104,7 @@ func (u *UserApp) HandleUpdateUserByID(c *fiber.Ctx) error {
 		"user":   user,
 	})
 }
+
+func (u *UserApp)HandleUserLogin(c *fiber.Ctx)error{
+	return nil
+}
