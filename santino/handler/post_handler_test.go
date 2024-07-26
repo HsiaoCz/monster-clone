@@ -11,6 +11,7 @@ import (
 	"github.com/HsiaoCz/monster-clone/santino/db"
 	"github.com/HsiaoCz/monster-clone/santino/types"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -22,30 +23,32 @@ func TestCreatePost(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	userHandler := NewUserHandler(data.NewUserData(db.Get()))
+	postHandler := NewPostHandler(data.NewPostStore(db.Get()))
 
 	app := fiber.New()
 
-	app.Post("/user", userHandler.HandleCreateUser)
+	app.Post("/post", postHandler.HandleCreatePost)
 
-	parmas := types.CreateUserParams{
-		Username:         "shawcz",
-		Email:            "shawcz@gmail.com",
-		Password:         "shawcz123",
-		Synopsis:         "something wrong",
-		Avatar:           "./picture/1233.jpg",
-		Background_Image: "./bgi/1234.jpg",
+	parmas := types.CreatePostParams{
+		UserID:   uuid.New().String(),
+		Content:  "something",
+		PostPath: "./post/1234.txt",
 	}
 
 	b, _ := json.Marshal(parmas)
-	req := httptest.NewRequest("POST", "/user", bytes.NewBuffer(b))
+	req := httptest.NewRequest("POST", "/post", bytes.NewBuffer(b))
 	req.Header.Add("Content-Type", "application/json")
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatal(err)
 	}
-	userParams := types.CreateUserParams{}
+	postParams := types.CreatePostParams{}
 
-	json.NewDecoder(resp.Body).Decode(&userParams)
+	json.NewDecoder(resp.Body).Decode(&postParams)
+
+	if parmas.Content != postParams.Content {
+		t.Errorf("want %s but got %s", parmas.Content, postParams.Content)
+	}
+
 }

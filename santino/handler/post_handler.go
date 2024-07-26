@@ -33,3 +33,10 @@ func (p *PostHandler) HandleCreatePost(c *fiber.Ctx) error {
 		"post":    post,
 	})
 }
+
+func (p *PostHandler) HandleDeletePostByID(c *fiber.Ctx) error {
+	if err := p.post.DeletePostByID(c.Query("pid")); err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	return c.Status(http.StatusOK).SendString("some thing")
+}

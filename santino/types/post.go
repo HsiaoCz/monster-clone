@@ -15,7 +15,6 @@ type Post struct {
 
 type CreatePostParams struct {
 	UserID   string `json:"user_id"`
-	PostID   string `json:"post_id"`
 	Content  string `json:"content"`
 	PostPath string `json:"post_path"`
 }

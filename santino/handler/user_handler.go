@@ -79,3 +79,14 @@ func (u *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 		"message": "delete user success",
 	})
 }
+
+func (u *UserHandler) HandleUserLogin(c *fiber.Ctx) error {
+	var user_login_params types.UserLogin
+	if err := c.BodyParser(&user_login_params); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	if err := u.user.GetUserByEmailAndPassword(user_login_params.Email, user_login_params.Password); err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	return c.Status(http.StatusOK).SendString("login success")
+}
