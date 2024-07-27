@@ -17,6 +17,7 @@ import (
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 func main() {
@@ -29,6 +30,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	go func(ctx context.Context) {
+		if err := clinet.Ping(ctx, &readpref.ReadPref{}); err != nil {
+			log.Fatal(err)
+		}
+	}(ctx)
+
 	var (
 		logger         = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{}))
 		userColl       = clinet.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
