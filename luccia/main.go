@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/HsiaoCz/monster-clone/luccia/app"
+	"github.com/HsiaoCz/monster-clone/luccia/store"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -35,8 +37,16 @@ func main() {
 	})
 
 	var (
-		router = http.NewServeMux()
+		userColl  = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
+		userStore = store.UserStoreInit(client, userColl)
+		userApp   = app.UserAppInit(userStore)
+		router    = http.NewServeMux()
 	)
+
+	{
+		// router
+		router.HandleFunc("POST /user", app.TransferHandlerfunc(userApp.HandleCreateUser))
+	}
 
 	logrus.WithFields(logrus.Fields{
 		"listen address": os.Getenv("PORT"),
