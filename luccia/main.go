@@ -46,7 +46,8 @@ func main() {
 
 	{
 		// router
-		router.HandleFunc("POST /user", app.TransferHandlerfunc(userApp.HandleCreateUser))
+		router.HandleFunc("POST /user/sigup", app.TransferHandlerfunc(userApp.HandleCreateUser))
+		router.HandleFunc("POST /user/login", app.TransferHandlerfunc(userApp.HandleUserLogin))
 	}
 
 	logrus.WithFields(logrus.Fields{
