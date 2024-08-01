@@ -93,6 +93,20 @@ func (p UpdateUserParams) ValidateUpdateUserParams() map[string]string {
 	return errors
 }
 
+type VerifyUserPasswordParmas struct {
+	Password       string `json:"password"`
+	VerifyPassword string `json:"verify_password"`
+}
+
+func (v VerifyUserPasswordParmas) Validate() bool {
+	return v.Password == v.VerifyPassword
+}
+
+func (v VerifyUserPasswordParmas) EncryptedUserPassword(password string) string {
+	return encryptPassword(v.Password)
+}
+
+
 // UserInfo context
 type UserInfo struct {
 	UserID  primitive.ObjectID
