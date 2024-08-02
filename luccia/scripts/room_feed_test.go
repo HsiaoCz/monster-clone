@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func TestFeedCreateUser(t *testing.T) {
+func TestCreateRoom(t *testing.T) {
 	if err := godotenv.Load("../.env"); err != nil {
 		t.Fatal(err)
 	}
