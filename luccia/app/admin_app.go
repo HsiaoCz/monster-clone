@@ -19,3 +19,15 @@ func AdminAppInit(store *store.Store) *AdminApp {
 func (a *AdminApp) HandleCreateHotel(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
+
+func (a *AdminApp) HandleCreateRoom(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (a *AdminApp) HandleDeleteHotel(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (a *AdminApp) HandleDeleteRoom(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}

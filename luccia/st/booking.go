@@ -49,3 +49,5 @@ func ParseStringToTime(timestr string) (time.Time, error) {
 	}
 	return formatTime, nil
 }
+
+type UpdateBookingParams struct{}

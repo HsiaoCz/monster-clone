@@ -19,3 +19,11 @@ func BookingAppInit(store *store.Store) *BookingApp {
 func (b *BookingApp) HandleGetBooking(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
+
+func (b *BookingApp)HandleUpdateBooking(w http.ResponseWriter, r *http.Request)error{
+	return nil
+}
+
+func (b *BookingApp)HandleCancelBooking(w http.ResponseWriter, r *http.Request)error{
+	return nil
+}
