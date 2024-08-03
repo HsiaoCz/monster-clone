@@ -1,14 +1,21 @@
 package app
 
-import "github.com/HsiaoCz/monster-clone/luccia/store"
+import (
+	"net/http"
+
+	"github.com/HsiaoCz/monster-clone/luccia/store"
+)
 
 type BookingApp struct {
 	store *store.Store
 }
 
-func BookingAppInit(store *store.Store)*BookingApp{
+func BookingAppInit(store *store.Store) *BookingApp {
 	return &BookingApp{
 		store: store,
 	}
 }
 
+func (b *BookingApp) HandleGetBooking(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
