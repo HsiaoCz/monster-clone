@@ -19,3 +19,7 @@ func RoomAppInit(store *store.Store) *RoomApp {
 func (ra *RoomApp) HandleGetRooms(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
+
+func (ra *RoomApp) HandleGetRoomByID(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}

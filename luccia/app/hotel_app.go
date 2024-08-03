@@ -19,3 +19,7 @@ func HotelAppInit(store *store.Store) *HotelApp {
 func (h *HotelApp) HandleGetHotels(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
+
+func (h *HotelApp) HandleGetHotelByID(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
