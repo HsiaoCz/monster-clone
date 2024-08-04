@@ -12,5 +12,5 @@ type RoomStorer interface {
 	DeleteRoom(context.Context, primitive.ObjectID) error
 	GetRooms(context.Context, string) ([]*st.Room, error)
 	GetRoomByID(context.Context, primitive.ObjectID) (*st.Room, error)
-	UpdateRoom(context.Context, primitive.ObjectID) (*st.Room, error)
+	UpdateRoom(context.Context, primitive.ObjectID,*st.UpdateRoomParams) (*st.Room, error)
 }

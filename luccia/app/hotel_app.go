@@ -17,9 +17,11 @@ func HotelAppInit(store *store.Store) *HotelApp {
 }
 
 func (h *HotelApp) HandleGetHotels(w http.ResponseWriter, r *http.Request) error {
+	// get hotels don't need login
 	return nil
 }
 
 func (h *HotelApp) HandleGetHotelByID(w http.ResponseWriter, r *http.Request) error {
+	// get hotels don't need login
 	return nil
 }
