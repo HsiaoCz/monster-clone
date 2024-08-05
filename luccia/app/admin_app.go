@@ -60,3 +60,11 @@ func (a *AdminApp) HandleDeleteRoom(w http.ResponseWriter, r *http.Request) erro
 	}
 	return nil
 }
+
+func (a *AdminApp) HandleUpdateHotel(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
+
+func (a *AdminApp) HandleUpdateRoom(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}

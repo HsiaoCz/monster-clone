@@ -1,5 +1,8 @@
 package store
 
 type Store struct {
-	Us UserStorer
+	Us    UserStorer
+	Room  RoomStorer
+	Hotel HotelStorer
+	Book  BookingStorer
 }

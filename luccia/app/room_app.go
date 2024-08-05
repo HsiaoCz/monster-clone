@@ -25,3 +25,7 @@ func (ra *RoomApp) HandleGetRoomByID(w http.ResponseWriter, r *http.Request) err
 	// get hotels don't need login
 	return nil
 }
+
+func (ra *RoomApp) HandleBookingRoom(w http.ResponseWriter, r *http.Request) error {
+	return nil
+}
