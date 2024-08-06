@@ -39,5 +39,20 @@ type CreateRoomParams struct {
 	Available bool    `json:"available"`
 }
 
+func NewRoomFromParams(parmas CreateRoomParams) (*Room, error) {
+	HotelID, err := primitive.ObjectIDFromHex(parmas.HotelID)
+	if err != nil {
+		return nil, err
+	}
+	return &Room{
+		Size:      parmas.Size,
+		Seaside:   parmas.Seaside,
+		Available: parmas.Available,
+		BasePrice: parmas.BasePrice,
+		Price:     parmas.Price,
+		HotelID:   HotelID,
+	}, nil
+}
+
 type UpdateHotelParams struct{}
 type UpdateRoomParams struct{}
