@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RoomStorer interface {
@@ -71,5 +72,29 @@ func (r *RoomStore) GetRoomByID(ctx context.Context, roomID primitive.ObjectID) 
 }
 
 func (r *RoomStore) UpdateRoom(ctx context.Context, roomID primitive.ObjectID, updateRoomParams *st.UpdateRoomParams) (*st.Room, error) {
-	return nil, nil
+	filter := bson.D{
+		{Key: "_id", Value: roomID},
+	}
+	update := bson.D{
+		{Key: "$set", Value: bson.D{
+			{Key: "basePrice", Value: updateRoomParams.BasePrice},
+			{Key: "price", Value: updateRoomParams.Price},
+			{Key: "avaliable", Value: updateRoomParams.Available},
+		}},
+	}
+	updateOptions := options.Update().SetUpsert(true)
+
+	res, err := r.coll.UpdateOne(ctx, filter, update, updateOptions)
+	if err != nil {
+		return nil, err
+	}
+	if res.UpsertedCount == 0 {
+		return nil, errors.New("no this record")
+	}
+
+	room := &st.Room{}
+	if err := r.coll.FindOne(ctx, filter).Decode(room); err != nil {
+		return nil, err
+	}
+	return room, nil
 }

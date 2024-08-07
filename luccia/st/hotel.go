@@ -27,7 +27,7 @@ type Room struct {
 	BasePrice float64            `bson:"basePrice" json:"basePrice"`
 	Price     float64            `bson:"price" json:"price"`
 	HotelID   primitive.ObjectID `bson:"hotelID" json:"hotelID"`
-	Available bool               `bson:"-" json:"available"`
+	Available bool               `bson:"available" json:"available"`
 }
 
 type CreateRoomParams struct {
@@ -55,4 +55,14 @@ func NewRoomFromParams(parmas CreateRoomParams) (*Room, error) {
 }
 
 type UpdateHotelParams struct{}
-type UpdateRoomParams struct{}
+type UpdateRoomParams struct {
+	BasePrice float64 `bson:"basePrice" json:"basePrice"`
+	Price     float64 `bson:"price" json:"price"`
+	Available bool    `bson:"available" json:"available"`
+}
+
+type CreateHotelParmas struct {
+	Name      string               `json:"name"`
+	Localtion string               `json:"localtion"`
+	Rooms     []primitive.ObjectID `json:"rooms"`
+}
