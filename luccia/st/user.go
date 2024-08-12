@@ -11,13 +11,10 @@ import (
 )
 
 const (
-	bcryptCost              = 12
-	minUsername             = 4
-	minPasswordLen          = 7
-	CtxUserInfoKey UserType = "userInfo"
+	bcryptCost     = 12
+	minUsername    = 4
+	minPasswordLen = 7
 )
-
-type UserType string
 
 type User struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty" json:"id"`
@@ -105,7 +102,6 @@ func (v VerifyUserPasswordParmas) Validate() bool {
 func (v VerifyUserPasswordParmas) EncryptedUserPassword() string {
 	return encryptPassword(v.Password)
 }
-
 
 // UserInfo context
 type UserInfo struct {

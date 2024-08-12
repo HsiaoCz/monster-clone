@@ -16,3 +16,4 @@ func ErrorMessage(status int, message string) ErrorMsg {
 	}
 }
 
+type Map map[string]any
