@@ -101,7 +101,7 @@ func NewUserFromParams(params CreateUserParams) *User {
 		Birthday:   params.Birthday,
 		Age:        getUserAge(params.Birthday),
 		Gender:     params.Gender,
-		Avatar:     "./static/user/avatar/1211.jpg",
+		Avatar:     "./static/avatar/1211.jpg",
 		Tags:       params.Tags,
 		Likes:      "0",
 		Describe:   "0",
@@ -182,4 +182,9 @@ type UserInfo struct {
 	UserID  primitive.ObjectID
 	Email   string
 	IsAdmin bool
+}
+
+type UserLogin struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
 }
