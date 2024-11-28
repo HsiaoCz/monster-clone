@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/HsiaoCz/monster-clone/luna/handlers"
+	"github.com/HsiaoCz/monster-clone/luna/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
@@ -66,7 +67,7 @@ func main() {
 	var (
 		app     = fiber.New(config)
 		port    = os.Getenv("PORT")
-		userApp = &handlers.UserApp{}
+		userApp = handlers.UserAppInit(storage.UserStoreInit(client, client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))))
 		v1      = app.Group("/api/v1")
 	)
 
