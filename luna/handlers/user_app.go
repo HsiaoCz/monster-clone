@@ -6,12 +6,14 @@ import (
 )
 
 type UserApp struct {
-	store storage.UserStoreInter
+	store   storage.UserStoreInter
+	session storage.SessionStoreInter
 }
 
-func UserAppInit(store storage.UserStoreInter) *UserApp {
+func UserAppInit(store storage.UserStoreInter, session storage.SessionStoreInter) *UserApp {
 	return &UserApp{
-		store: store,
+		store:   store,
+		session: session,
 	}
 }
 
