@@ -26,3 +26,12 @@ func (u *UserCase) CreateUser(user *types.User) (*types.User, error) {
 	}
 	return user, nil
 }
+
+func (u *UserCase) GetUserByID(user_id string) (*types.User, error) {
+	var user types.User
+	tx := u.db.Debug().Model(&types.User{}).Where("user_id = ?", user_id).First(&user)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &user, nil
+}
