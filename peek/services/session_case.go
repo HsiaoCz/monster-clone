@@ -10,6 +10,7 @@ import (
 
 type SessionCaser interface {
 	CreateSession(context.Context, *types.Session) (*types.Session, error)
+	GetSessionByToken(context.Context, string) (*types.Session, error)
 }
 
 type SessionCase struct {
@@ -28,3 +29,13 @@ func (s *SessionCase) CreateSession(ctx context.Context, session *types.Session)
 	}
 	return session, nil
 }
+
+func (s *SessionCase) GetSessionByToken(ctx context.Context, token string) (*types.Session, error) {
+	var session types.Session
+	tx := s.db.Debug().WithContext(ctx).Model(&types.Session{}).Where("token = ?", token).First(&session)
+	if tx.Error!=nil{
+		return nil,tx.Error
+	}
+    return &session,nil
+}
+

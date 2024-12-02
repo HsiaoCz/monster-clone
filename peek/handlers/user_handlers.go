@@ -23,5 +23,6 @@ func (u *UserHandlers) HandleCreateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(create_user_params); err != nil {
 		return ErrorMessage(http.StatusBadRequest, err.Error())
 	}
+	
 	return nil
 }

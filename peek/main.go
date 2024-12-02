@@ -65,6 +65,8 @@ func main() {
 			log.Fatal(err)
 		}
 	}()
+
+	// gracefully shutdown
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	<-quit
