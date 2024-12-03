@@ -45,6 +45,13 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := db.Init(); err != nil {
+		logrus.WithFields(logrus.Fields{
+			"message": err.Error(),
+		}).Error("db init error,please check it out.....")
+		os.Exit(1)
+	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -68,7 +75,7 @@ func main() {
 	var (
 		app     = fiber.New(config)
 		port    = os.Getenv("PORT")
-		userApp = handlers.UserAppInit(storage.UserStoreInit(client, client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))),storage.SessionStoreInit(db.Get()))
+		userApp = handlers.UserAppInit(storage.UserStoreInit(client, client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))), storage.SessionStoreInit(db.Get()))
 		v1      = app.Group("/api/v1")
 	)
 

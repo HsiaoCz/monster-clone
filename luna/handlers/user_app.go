@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/HsiaoCz/monster-clone/luna/storage"
 	"github.com/HsiaoCz/monster-clone/luna/types"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 )
 
 type UserApp struct {
@@ -35,26 +37,27 @@ func (u *UserApp) HandleCreateUser(c *fiber.Ctx) error {
 		return ErrorMessage(http.StatusInternalServerError, err.Error())
 	}
 	// session should create after user login
-	// session := &types.Sessions{
-	// 	Token:     uuid.New().String(),
-	// 	UserID:    user.ID.String(),
-	// 	IpAddress: c.IP(),
-	// 	UserAgent: string(c.Request().Header.UserAgent()),
-	// 	ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
-	// }
-	// session, err = u.session.CreateSession(c.Context(), session)
-	// if err != nil {
-	// 	return ErrorMessage(http.StatusInternalServerError, err.Error())
-	// }
-	// c.Cookie(&fiber.Cookie{
-	// 	Name:     "token",
-	// 	Value:    session.Token,
-	// 	Expires:  time.Now().Add(time.Hour * 24 * 30),
-	// 	HTTPOnly: true,
-	// })
+	session := &types.Sessions{
+		Token:     uuid.New().String(),
+		UserID:    user.ID.String(),
+		IpAddress: c.IP(),
+		UserAgent: string(c.Request().Header.UserAgent()),
+		ExpiresAt: time.Now().Add(time.Hour * 24 * 30),
+	}
+	session, err = u.session.CreateSession(c.Context(), session)
+	if err != nil {
+		return ErrorMessage(http.StatusInternalServerError, err.Error())
+	}
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    session.Token,
+		Expires:  time.Now().Add(time.Hour * 24 * 30),
+		HTTPOnly: true,
+	})
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status":  http.StatusOK,
 		"message": "create user success",
 		"user":    user,
+		"session": session,
 	})
 }

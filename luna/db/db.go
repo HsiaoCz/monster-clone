@@ -5,6 +5,9 @@ import (
 	"os"
 
 	"github.com/anthdm/superkit/db"
+
+	_ "github.com/mattn/go-sqlite3"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -18,7 +21,7 @@ func Get() *gorm.DB {
 	return dbInstance
 }
 
-func init() {
+func Init() error {
 	// Create a default *sql.DB exposed by the superkit/db package
 	// based on the given configuration.
 	config := db.Config{
@@ -30,7 +33,7 @@ func init() {
 	}
 	dbinst, err := db.NewSQL(config)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	// Based on the driver create the corresponding DB instance.
 	// By default, the SuperKit boilerplate comes with a pre-configured
@@ -45,7 +48,7 @@ func init() {
 	case db.DriverSqlite3:
 		dbInstance, err = gorm.Open(sqlite.New(sqlite.Config{
 			Conn: dbinst,
-		}))
+		}), &gorm.Config{})
 	case db.DriverMysql:
 		// ...
 	default:
@@ -54,4 +57,5 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	return nil
 }
