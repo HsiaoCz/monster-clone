@@ -1,3 +1,5 @@
 package dao
 
-type SessionCaser interface{}
+type SessionCaser interface {
+	CreateSession()
+}
