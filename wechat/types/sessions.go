@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type Session struct {
+type Sessions struct {
 	gorm.Model
 	Token     string    `json:"token"`
 	UserID    string    `json:"user_id"`
