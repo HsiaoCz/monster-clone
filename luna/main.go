@@ -82,6 +82,7 @@ func main() {
 	{
 		// user handler function
 		v1.Post("/user", userApp.HandleCreateUser)
+		v1.Put("/user", userApp.HandleUpdateUser)
 	}
 
 	// restart and shutdown

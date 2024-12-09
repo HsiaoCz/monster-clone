@@ -61,3 +61,9 @@ func (u *UserApp) HandleCreateUser(c *fiber.Ctx) error {
 		"session": session,
 	})
 }
+
+func (u *UserApp)HandleUpdateUser(c *fiber.Ctx)error{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
+		
+	})
+}

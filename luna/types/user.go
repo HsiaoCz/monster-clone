@@ -120,3 +120,23 @@ func getUserAge(birthday string) int {
 	age := time.Now().Year() - t.Year()
 	return age
 }
+
+type UpdateUserParams struct {
+	Username string `json:"username"`
+	Content  string `json:"content"`
+	Job      string `json:"job"`
+	Company  string `json:"company"`
+	Avatar   string `json:"avatar"`
+	Gender   string `json:"gender"`
+}
+
+func (params UpdateUserParams) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(params.Username) < minUsernameLen || len(params.Username) > maxUsernameLen {
+		errors["username"] = fmt.Sprintf("the username shouldn't less then %d and more then %d", minUsernameLen, maxUsernameLen)
+	}
+	if !isValidGender(params.Gender) {
+		errors["gender"] = fmt.Sprintf("the gender should use (%s) or (%s)", "male", "female")
+	}
+	return errors
+}
