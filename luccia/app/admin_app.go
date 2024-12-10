@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/luccia/st"
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 )
 
 type AdminApp struct {
-	store *store.Store
+	store *storage.Store
 }
 
-func AdminAppInit(store *store.Store) *AdminApp {
+func AdminAppInit(store *storage.Store) *AdminApp {
 	return &AdminApp{
 		store: store,
 	}

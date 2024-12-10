@@ -5,14 +5,14 @@ import (
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/luccia/st"
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 )
 
 type AuthSession struct {
-	sen store.SessionStorer
+	sen storage.SessionStorer
 }
 
-func AuthSessionInit(sen store.SessionStorer) *AuthSession {
+func AuthSessionInit(sen storage.SessionStorer) *AuthSession {
 	return &AuthSession{
 		sen: sen,
 	}

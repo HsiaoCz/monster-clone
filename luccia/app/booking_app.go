@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/HsiaoCz/monster-clone/luccia/st"
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 )
 
 type BookingApp struct {
-	store *store.Store
+	store *storage.Store
 }
 
-func BookingAppInit(store *store.Store) *BookingApp {
+func BookingAppInit(store *storage.Store) *BookingApp {
 	return &BookingApp{
 		store: store,
 	}

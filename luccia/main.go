@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"github.com/HsiaoCz/monster-clone/luccia/app"
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,8 +38,8 @@ func main() {
 
 	var (
 		userColl  = client.Database(os.Getenv("DBNAME")).Collection(os.Getenv("USERCOLL"))
-		userStore = store.UserStoreInit(client, userColl)
-		store     = &store.Store{Us: userStore}
+		userStore = storage.UserStoreInit(client, userColl)
+		store     = &storage.Store{Us: userStore}
 		userApp   = app.UserAppInit(store)
 		router    = http.NewServeMux()
 	)

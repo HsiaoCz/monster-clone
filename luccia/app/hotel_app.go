@@ -3,14 +3,14 @@ package app
 import (
 	"net/http"
 
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 )
 
 type HotelApp struct {
-	store *store.Store
+	store *storage.Store
 }
 
-func HotelAppInit(store *store.Store) *HotelApp {
+func HotelAppInit(store *storage.Store) *HotelApp {
 	return &HotelApp{
 		store: store,
 	}

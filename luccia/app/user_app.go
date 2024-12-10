@@ -6,15 +6,15 @@ import (
 
 	"github.com/HsiaoCz/monster-clone/luccia/app/helper"
 	"github.com/HsiaoCz/monster-clone/luccia/st"
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserApp struct {
-	store *store.Store
+	store *storage.Store
 }
 
-func UserAppInit(store *store.Store) *UserApp {
+func UserAppInit(store *storage.Store) *UserApp {
 	return &UserApp{
 		store: store,
 	}

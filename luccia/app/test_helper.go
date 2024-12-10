@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/HsiaoCz/monster-clone/luccia/store"
+	"github.com/HsiaoCz/monster-clone/luccia/storage"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -16,7 +16,7 @@ const (
 
 type testStore struct {
 	client *mongo.Client
-	store  *store.Store
+	store  *storage.Store
 }
 
 func setup(t *testing.T) *testStore {
@@ -24,11 +24,11 @@ func setup(t *testing.T) *testStore {
 	if err != nil {
 		t.Fatal(err)
 	}
-	userStore := store.UserStoreInit(client, client.Database(testDBName).Collection("users"))
+	userStore := storage.UserStoreInit(client, client.Database(testDBName).Collection("users"))
 
 	return &testStore{
 		client: client,
-		store:  &store.Store{Us: userStore},
+		store:  &storage.Store{Us: userStore},
 	}
 }
 
