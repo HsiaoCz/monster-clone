@@ -7,6 +7,9 @@ import (
 
 type UserCaseInter interface {
 	CreateUser(*types.User) (*types.User, error)
+	GetUserByID(string) (*types.User, error)
+	DeleteUserByID(string) error
+	GetUserByEmailAndPassword(types.UserLoginParmas) (*types.User, error)
 }
 
 type UserCase struct {
@@ -30,6 +33,21 @@ func (u *UserCase) CreateUser(user *types.User) (*types.User, error) {
 func (u *UserCase) GetUserByID(user_id string) (*types.User, error) {
 	var user types.User
 	tx := u.db.Debug().Model(&types.User{}).Where("user_id = ?", user_id).First(&user)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &user, nil
+}
+
+func (u *UserCase) DeleteUserByID(user_id string) error {
+	var user types.User
+	tx := u.db.Debug().Model(types.User{}).Where("user_id = ?", user_id).Delete(&user)
+	return tx.Error
+}
+
+func (u *UserCase) GetUserByEmailAndPassword(parmas types.UserLoginParmas) (*types.User, error) {
+	var user types.User
+	tx := u.db.Debug().Model(&types.User{}).Where("email = ? AND password", parmas.Email, parmas.Password).First(&user)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

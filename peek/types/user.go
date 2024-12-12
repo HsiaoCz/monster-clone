@@ -70,7 +70,7 @@ func encryptPassword(oPassword string) string {
 	return hex.EncodeToString(h.Sum([]byte(oPassword)))
 }
 
-type UserLogin struct {
+type UserLoginParmas struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
