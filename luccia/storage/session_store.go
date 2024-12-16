@@ -10,6 +10,7 @@ import (
 type SessionStorer interface {
 	CreateSession(context.Context, *st.Session) (*st.Session, error)
 	GetSessionByToken(context.Context, string) (*st.Session, error)
+	DeleteSessionByToken(context.Context, string) error
 }
 
 type SessionStore struct {
@@ -37,4 +38,9 @@ func (s *SessionStore) GetSessionByToken(ctx context.Context, token string) (*st
 		return nil, tx.Error
 	}
 	return &session, nil
+}
+
+func (s *SessionStore) DeleteSessionByToken(ctx context.Context, token string) error {
+	var session st.Session
+	return s.db.Debug().WithContext(ctx).Model(&st.Session{}).Where("token = ?", token).Delete(&session).Error
 }
