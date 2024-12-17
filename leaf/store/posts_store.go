@@ -10,6 +10,10 @@ import (
 
 type PostStorer interface {
 	CreatePost(context.Context, *models.Posts) (*models.Posts, error)
+	GetPostByID(context.Context, primitive.ObjectID) (*models.Posts, error)
+	GetPostByTag(context.Context, primitive.ObjectID) ([]*models.Posts, error)
+	GetPostByAuther(context.Context, string) ([]*models.User, error)
+	GetPostByUserID(context.Context, primitive.ObjectID) ([]*models.Posts, error)
 }
 
 type MongoPostStore struct {
@@ -33,4 +37,16 @@ func (m *MongoPostStore) CreatePost(ctx context.Context, post *models.Posts) (*m
 	}
 	post.ID = res.InsertedID.(primitive.ObjectID)
 	return post, nil
+}
+func (m *MongoPostStore) GetPostByID(context.Context, primitive.ObjectID) (*models.Posts, error) {
+	return nil, nil
+}
+func (m *MongoPostStore) GetPostByTag(context.Context, primitive.ObjectID) ([]*models.Posts, error) {
+	return nil, nil
+}
+func (m *MongoPostStore) GetPostByAuther(context.Context, string) ([]*models.User, error) {
+	return nil, nil
+}
+func (m *MongoPostStore) GetPostByUserID(context.Context, primitive.ObjectID) ([]*models.Posts, error) {
+	return nil, nil
 }

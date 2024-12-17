@@ -9,6 +9,7 @@ import (
 
 type CommentStorer interface {
 	CreateComments(context.Context, *models.Comments) (*models.Comments, error)
+	UpdateComment(context.Context, int) (*models.Comments, error)
 }
 
 type MongoCommentStore struct {
@@ -24,5 +25,9 @@ func NewMongoCommentStore(client *mongo.Client, coll *mongo.Collection) *MongoCo
 }
 
 func (m *MongoCommentStore) CreateComments(ctx context.Context, comment *models.Comments) (*models.Comments, error) {
+	return nil, nil
+}
+
+func (m *MongoCommentStore) UpdateComment(ctx context.Context, likes int) (*models.Comments, error) {
 	return nil, nil
 }
