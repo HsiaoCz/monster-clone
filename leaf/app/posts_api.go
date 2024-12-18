@@ -38,6 +38,12 @@ func (p *PostApp) HandleDeletePost(c *fiber.Ctx) error {
 	return nil
 }
 func (p *PostApp) HandleGetPostsByID(c *fiber.Ctx) error {
+	id := c.Params("pid")
+	post_id, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return ErrorMessage(http.StatusBadRequest, err.Error())
+	}
+	p.store.Post.GetPostByID(c.Context(), post_id)
 	return nil
 }
 func (p *PostApp) HandleCreatePostByClassify(c *fiber.Ctx) error {

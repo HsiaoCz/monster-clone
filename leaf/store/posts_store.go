@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/HsiaoCz/monster-clone/leaf/models"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -11,9 +12,9 @@ import (
 type PostStorer interface {
 	CreatePost(context.Context, *models.Posts) (*models.Posts, error)
 	GetPostByID(context.Context, primitive.ObjectID) (*models.Posts, error)
-	GetPostByTag(context.Context, primitive.ObjectID) ([]*models.Posts, error)
-	GetPostByAuther(context.Context, string) ([]*models.User, error)
-	GetPostByUserID(context.Context, primitive.ObjectID) ([]*models.Posts, error)
+	GetPostByTag(context.Context, string) ([]models.Posts, error)
+	GetPostByAuther(context.Context, string) ([]models.Posts, error)
+	GetPostByUserID(context.Context, primitive.ObjectID) ([]models.Posts, error)
 }
 
 type MongoPostStore struct {
@@ -38,15 +39,33 @@ func (m *MongoPostStore) CreatePost(ctx context.Context, post *models.Posts) (*m
 	post.ID = res.InsertedID.(primitive.ObjectID)
 	return post, nil
 }
-func (m *MongoPostStore) GetPostByID(context.Context, primitive.ObjectID) (*models.Posts, error) {
+func (m *MongoPostStore) GetPostByID(ctx context.Context, post_id primitive.ObjectID) (*models.Posts, error) {
+	filter := bson.D{
+		{Key: "_id", Value: post_id},
+	}
+	var post models.Posts
+	if err := m.coll.FindOne(ctx, filter).Decode(&post); err != nil {
+		return nil, err
+	}
+	return &post, nil
+}
+func (m *MongoPostStore) GetPostByTag(ctx context.Context, tag string) ([]models.Posts, error) {
+	filter := bson.D{
+		{Key: "tags", Value: bson.D{{Key: "$in", Value: []string{tag}}}},
+	}
+	var posts []models.Posts
+	cur, err := m.coll.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	if err := cur.All(ctx, &posts); err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+func (m *MongoPostStore) GetPostByAuther(context.Context, string) ([]models.Posts, error) {
 	return nil, nil
 }
-func (m *MongoPostStore) GetPostByTag(context.Context, primitive.ObjectID) ([]*models.Posts, error) {
-	return nil, nil
-}
-func (m *MongoPostStore) GetPostByAuther(context.Context, string) ([]*models.User, error) {
-	return nil, nil
-}
-func (m *MongoPostStore) GetPostByUserID(context.Context, primitive.ObjectID) ([]*models.Posts, error) {
+func (m *MongoPostStore) GetPostByUserID(context.Context, primitive.ObjectID) ([]models.Posts, error) {
 	return nil, nil
 }
