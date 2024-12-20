@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/HsiaoCz/monster-clone/tony/types"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -28,11 +29,32 @@ func NewMongoPostStore(client *mongo.Client, coll *mongo.Collection) *MongoPostS
 }
 
 func (m *MongoPostStore) CreatePost(ctx context.Context, post *types.Posts) (*types.Posts, error) {
-	return nil, nil
+	cur, err := m.coll.InsertOne(ctx, post)
+	if err != nil {
+		return nil, err
+	}
+	post.ID = cur.InsertedID.(primitive.ObjectID)
+	return post, nil
 }
 func (m *MongoPostStore) DeletePost(ctx context.Context, pid primitive.ObjectID) error {
-	return nil
+	filter := bson.D{
+		{Key: "_id", Value: pid},
+	}
+	_, err := m.coll.DeleteOne(ctx, filter)
+	return err
 }
 func (m *MongoPostStore) GetPosts(ctx context.Context) ([]*types.Posts, error) {
-	return nil, nil
+	var posts []*types.Posts
+	cur, err := m.coll.Find(ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	for cur.Next(ctx) {
+		var post types.Posts
+		if err := cur.Decode(&post); err != nil {
+			return nil, err
+		}
+		posts = append(posts, &post)
+	}
+	return posts, nil
 }
