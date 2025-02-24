@@ -151,3 +151,36 @@ func (n *Node) becomeLeader() {
 func (n *Node) resetHeartbeatTimer() {
 	panic("unimplemented")
 }
+
+func (n *Node) runFollower() {
+	for {
+		select {
+		case <-n.electionTimer.C:
+			n.becomeCandidate()
+			return
+		}
+	}
+}
+
+func (n *Node) runCandidate() {
+	for {
+		select {
+		case <-n.electionTimer.C:
+			n.becomeCandidate()
+			return
+		}
+	}
+}
+
+func (n *Node) runLeader() {
+	for {
+		select {
+		case <-n.heartbeatTimer.C:
+			n.sendHeartbeats()
+		}
+	}
+}
+
+func (n *Node) sendHeartbeats() {
+	panic("unimplemented")
+}
